@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0057 — CI Pipeline Missing `npm audit` Step
