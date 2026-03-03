@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0078 — CI Workflow Runs Test Suite Twice
