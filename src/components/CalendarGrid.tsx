@@ -162,6 +162,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                 }
                 isFocusTarget={isSameDay(date, focusedDate)}
                 onSelect={onSelectDate}
+                locale={locale}
               />
             ))}
           </tr>

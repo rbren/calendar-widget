@@ -63,3 +63,28 @@ export function formatMonthYear(date: Date, locale?: string): string {
     year: 'numeric',
   }).format(date);
 }
+
+/** Builds a full accessible label for a day cell (e.g. "Saturday, March 15, 2026 (today, selected)"). */
+export function formatDayLabel(
+  date: Date,
+  locale: string | undefined,
+  flags: { isToday: boolean; isSelected: boolean; isDisabled: boolean },
+  markerLabel?: string,
+): string {
+  const formatted = new Intl.DateTimeFormat(locale, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(date);
+
+  const statuses: string[] = [];
+  if (flags.isToday) statuses.push('today');
+  if (flags.isSelected) statuses.push('selected');
+  if (flags.isDisabled) statuses.push('unavailable');
+
+  let label = formatted;
+  if (markerLabel) label += `, ${markerLabel}`;
+  if (statuses.length > 0) label += ` (${statuses.join(', ')})`;
+  return label;
+}

@@ -21,4 +21,5 @@ export {
   isDateInRange,
   isDateDisabled,
   formatMonthYear,
+  formatDayLabel,
 } from './utils/dates';

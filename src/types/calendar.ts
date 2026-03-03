@@ -68,4 +68,8 @@ export interface CalendarDayCellProps {
   isFocusTarget: boolean;
   /** Called when this day is clicked */
   onSelect: (date: Date) => void;
+  /** Locale for formatting the accessible date label */
+  locale?: string;
+  /** Optional marker/event label to include in the accessible name */
+  markerLabel?: string;
 }

@@ -4,6 +4,7 @@ import {
   isDateInRange,
   isDateDisabled,
   formatMonthYear,
+  formatDayLabel,
 } from './dates';
 
 describe('getCalendarDays', () => {
@@ -119,5 +120,84 @@ describe('formatMonthYear', () => {
   it('respects locale', () => {
     const result = formatMonthYear(new Date(2026, 0, 1), 'de-DE');
     expect(result).toBe('Januar 2026');
+  });
+});
+
+describe('formatDayLabel', () => {
+  const date = new Date(2026, 2, 15); // Sunday, March 15, 2026
+  const noFlags = { isToday: false, isSelected: false, isDisabled: false };
+
+  it('returns the full formatted date with no status', () => {
+    expect(formatDayLabel(date, 'en-US', noFlags)).toBe(
+      'Sunday, March 15, 2026',
+    );
+  });
+
+  it('appends (today) when isToday', () => {
+    expect(
+      formatDayLabel(date, 'en-US', { ...noFlags, isToday: true }),
+    ).toBe('Sunday, March 15, 2026 (today)');
+  });
+
+  it('appends (selected) when isSelected', () => {
+    expect(
+      formatDayLabel(date, 'en-US', { ...noFlags, isSelected: true }),
+    ).toBe('Sunday, March 15, 2026 (selected)');
+  });
+
+  it('appends (unavailable) when isDisabled', () => {
+    expect(
+      formatDayLabel(date, 'en-US', { ...noFlags, isDisabled: true }),
+    ).toBe('Sunday, March 15, 2026 (unavailable)');
+  });
+
+  it('combines multiple statuses', () => {
+    expect(
+      formatDayLabel(date, 'en-US', {
+        isToday: true,
+        isSelected: true,
+        isDisabled: false,
+      }),
+    ).toBe('Sunday, March 15, 2026 (today, selected)');
+  });
+
+  it('combines all three statuses', () => {
+    expect(
+      formatDayLabel(date, 'en-US', {
+        isToday: true,
+        isSelected: true,
+        isDisabled: true,
+      }),
+    ).toBe('Sunday, March 15, 2026 (today, selected, unavailable)');
+  });
+
+  it('includes marker label before statuses', () => {
+    expect(
+      formatDayLabel(
+        date,
+        'en-US',
+        { ...noFlags, isToday: true },
+        'Team standup',
+      ),
+    ).toBe('Sunday, March 15, 2026, Team standup (today)');
+  });
+
+  it('includes marker label with no statuses', () => {
+    expect(formatDayLabel(date, 'en-US', noFlags, 'Team standup')).toBe(
+      'Sunday, March 15, 2026, Team standup',
+    );
+  });
+
+  it('formats in German locale', () => {
+    const label = formatDayLabel(date, 'de-DE', noFlags);
+    expect(label).toContain('Sonntag');
+    expect(label).toContain('März');
+    expect(label).toContain('2026');
+  });
+
+  it('works with undefined locale', () => {
+    const label = formatDayLabel(date, undefined, noFlags);
+    expect(label).toBeTruthy();
+    expect(label).toContain('2026');
   });
 });

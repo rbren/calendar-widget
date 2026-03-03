@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CalendarDayCellProps } from '../types/calendar';
+import { formatDayLabel } from '../utils/dates';
 import styles from './CalendarDayCell.module.css';
 
 export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
@@ -10,6 +11,8 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   isDisabled,
   isFocusTarget,
   onSelect,
+  locale,
+  markerLabel,
 }) => {
   const handleClick = () => {
     if (!isDisabled) {
@@ -36,6 +39,13 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
     .filter(Boolean)
     .join(' ');
 
+  const ariaLabel = formatDayLabel(
+    date,
+    locale,
+    { isToday, isSelected, isDisabled },
+    markerLabel,
+  );
+
   return (
     <td
       role="gridcell"
@@ -44,6 +54,7 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
       aria-selected={isSelected}
       aria-disabled={isDisabled}
       aria-current={isToday ? 'date' : undefined}
+      aria-label={ariaLabel}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
     >

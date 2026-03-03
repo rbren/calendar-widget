@@ -11,6 +11,7 @@ const defaultProps = {
   isDisabled: false,
   isFocusTarget: false,
   onSelect: vi.fn(),
+  locale: 'en-US',
 };
 
 function renderCell(overrides: Partial<typeof defaultProps> = {}) {
@@ -119,5 +120,57 @@ describe('CalendarDayCell', () => {
     cell.focus();
     await userEvent.keyboard('{Enter}');
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  describe('aria-label', () => {
+    it('has an aria-label with the full date', () => {
+      renderCell();
+      const cell = screen.getByRole('gridcell');
+      expect(cell).toHaveAttribute(
+        'aria-label',
+        'Wednesday, April 15, 2026',
+      );
+    });
+
+    it('includes (today) in aria-label when isToday', () => {
+      renderCell({ isToday: true });
+      const cell = screen.getByRole('gridcell');
+      expect(cell.getAttribute('aria-label')).toContain('(today)');
+    });
+
+    it('includes (selected) in aria-label when isSelected', () => {
+      renderCell({ isSelected: true });
+      const cell = screen.getByRole('gridcell');
+      expect(cell.getAttribute('aria-label')).toContain('(selected)');
+    });
+
+    it('includes (unavailable) in aria-label when isDisabled', () => {
+      renderCell({ isDisabled: true });
+      const cell = screen.getByRole('gridcell');
+      expect(cell.getAttribute('aria-label')).toContain('(unavailable)');
+    });
+
+    it('combines multiple statuses in aria-label', () => {
+      renderCell({ isToday: true, isSelected: true });
+      const cell = screen.getByRole('gridcell');
+      expect(cell.getAttribute('aria-label')).toContain(
+        '(today, selected)',
+      );
+    });
+
+    it('includes marker label in aria-label', () => {
+      renderCell({ markerLabel: 'Team standup' });
+      const cell = screen.getByRole('gridcell');
+      expect(cell.getAttribute('aria-label')).toContain('Team standup');
+    });
+
+    it('formats aria-label using the provided locale', () => {
+      renderCell({ locale: 'de-DE' });
+      const cell = screen.getByRole('gridcell');
+      const label = cell.getAttribute('aria-label')!;
+      expect(label).toContain('Mittwoch');
+      expect(label).toContain('April');
+      expect(label).toContain('2026');
+    });
   });
 });
