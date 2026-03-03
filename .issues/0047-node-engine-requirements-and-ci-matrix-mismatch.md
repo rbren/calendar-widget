@@ -53,3 +53,10 @@ The CI specification in issue 0008 originally called for Node 18, 20, and 22. No
 2. `.github/workflows/ci.yml` matrix does not include Node 18
 3. CI pipeline passes on all matrix entries
 4. `npm run build` exits 0 on Node 20 and Node 22
+
+## Architect Notes
+
+Partial progress as of commit `7c0376ef`:
+
+- **CI matrix updated** -- Node 18 removed, matrix is now `[20, 22]`. CI passes on both. DONE.
+- **`engines` field still missing** -- `package.json` has no `engines` field. This is the remaining work item. Without it, consumers and CI have no declared Node version requirement.

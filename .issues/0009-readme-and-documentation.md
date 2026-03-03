@@ -69,3 +69,13 @@ Short guide covering:
 - The props table matches the actual `CalendarWidgetProps` type
 - The theming section lists every CSS custom property defined in the widget's CSS
 - Links (if any) are not broken
+
+## Architect Notes
+
+A README now exists with good coverage of features, installation, quick start, props, theming, keyboard navigation, and license. Remaining gaps:
+
+1. **Missing badges** -- No CI status badge, npm version badge, or license badge in the header.
+2. **Missing Development section** -- No instructions on how to clone, install, run dev server, run tests, or build.
+3. **Peer dependency inaccuracy** -- README states "Peer dependencies: React 19+ and ReactDOM 19+" but `package.json` declares `"react": "^18.0.0 || ^19.0.0"`. The README is more restrictive than the actual peer deps.
+4. **Quick start missing import** -- The code example does not include `import { useState } from 'react'`, making it not copy-pasteable as-is.
+5. **No CONTRIBUTING.md** (recommended but optional per original spec).

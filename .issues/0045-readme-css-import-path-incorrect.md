@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0045 — README and Docs Reference Incorrect CSS Import Path
@@ -55,3 +55,14 @@ import '@calendar-widget/core/style.css';
 1. `grep -r "core.css" README.md docs/` returns no results
 2. `grep -r "style.css" README.md docs/features/styling.md` shows the corrected import path
 3. The import path `@calendar-widget/core/style.css` matches the `exports` field in `package.json`
+
+## Architect Review — Closed
+
+All affected files now use the correct import path `@calendar-widget/core/style.css`:
+
+- `README.md` line 25 ✓
+- `docs/features/styling.md` line 8 ✓
+- `docs/features/date-selection.md` line 10 ✓
+- `docs/releases/0.1.0.md` correctly references `dist/style.css` ✓
+
+`grep -rn "core.css" README.md docs/` returns no results.

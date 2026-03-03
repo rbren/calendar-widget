@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: closed
 ---
 
 # 0028 — Coverage Thresholds Broken by Untested Source Files
@@ -54,3 +54,18 @@ After writing the tests, `npm run test:coverage` must exit 0 with all thresholds
 2. All four coverage metrics (statements, branches, functions, lines) are ≥80%
 3. `src/utils/placeholder.test.ts` no longer exists
 4. Every source file under `src/components/`, `src/hooks/`, and `src/utils/` has a corresponding `.test.ts` or `.test.tsx` file
+
+## Architect Review — Closed
+
+All requirements met as of commit `7c0376ef`:
+
+1. **Tests exist for all source files:**
+   - `src/utils/dates.test.ts` (20 tests) ✓
+   - `src/hooks/useCalendarState.test.ts` (17 tests) ✓
+   - `src/components/CalendarDayCell.test.tsx` (14 tests) ✓
+   - `src/components/CalendarHeader.test.tsx` (4 tests) ✓
+   - `src/components/CalendarGrid.test.tsx` (16 tests) ✓
+   - `src/components/CalendarWidget.test.tsx` (8 tests) ✓
+2. **Placeholder test removed** — `src/utils/placeholder.test.ts` no longer exists. ✓
+3. **79 tests pass** — `npm test` exits 0. ✓
+4. **CI passes `test:coverage`** — Coverage thresholds met in GitHub Actions. ✓

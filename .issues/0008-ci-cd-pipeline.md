@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0008 — CI/CD Pipeline
@@ -94,3 +94,13 @@ The code was formatted with Prettier on Node 23, which produces slightly differe
 3. **Drop Node 18 from the matrix** — Vite 7.3.1 requires `node: ^20.19.0 || >=22.12.0`. Node 18 is unsupported and will fail. See issue 0047 for details.
 4. **Verify remaining Node matrix versions pass** — The current run only completed on Node 20. All matrix entries must complete successfully.
 5. **The pipeline must be GREEN on `main` before this issue can be closed.**
+
+## Architect Review — Closed
+
+All requirements met as of commit `7c0376ef`:
+
+1. **Formatting fixed** — `npm run format:check` passes on both Node 20 and 22 in CI. ✓
+2. **`npm run typecheck`** — CI step updated from `npx tsc --noEmit` to `npm run typecheck`. ✓
+3. **Node 18 dropped** — Matrix is `[20, 22]`. ✓
+4. **All matrix entries pass** — CI run `22638232852` on commit `7c0376ef` completed successfully on both Node 20 and Node 22. ✓
+5. **Pipeline is GREEN on `main`.** ✓
