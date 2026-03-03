@@ -23,6 +23,7 @@
   },
   "sideEffects": ["*.css"],
   "scripts": {
+    "dev": "vite",
     "build": "vite build && tsc --emitDeclarationOnly --declarationDir dist/types",
     "prebuild": "rm -rf dist",
     "lint": "eslint src/",
