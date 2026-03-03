@@ -5,7 +5,7 @@
 The widget ships a default stylesheet that you must import:
 
 ```tsx
-import '@calendar-widget/core/dist/core.css';
+import '@calendar-widget/core/style.css';
 ```
 
 ## CSS custom properties

@@ -22,7 +22,7 @@ npm install @calendar-widget/core
 
 ```tsx
 import { CalendarWidget } from '@calendar-widget/core';
-import '@calendar-widget/core/dist/core.css';
+import '@calendar-widget/core/style.css';
 
 function App() {
   const [date, setDate] = useState<Date | null>(null);

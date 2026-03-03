@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarWidget } from '@calendar-widget/core';
-import '@calendar-widget/core/dist/core.css';
+import '@calendar-widget/core/style.css';
 
 const today = new Date();
 const year = today.getFullYear();

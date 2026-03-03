@@ -7,7 +7,7 @@ Pass a `Date` as the `value` prop and handle changes with `onChange`:
 ```tsx
 import { useState } from 'react';
 import { CalendarWidget } from '@calendar-widget/core';
-import '@calendar-widget/core/dist/core.css';
+import '@calendar-widget/core/style.css';
 
 function App() {
   const [date, setDate] = useState<Date | null>(null);

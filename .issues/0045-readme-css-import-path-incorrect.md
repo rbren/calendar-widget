@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0045 — README and Docs Reference Incorrect CSS Import Path
