@@ -24,6 +24,8 @@ export function useCalendarState(props: CalendarWidgetProps) {
     new Date(initialDate.getFullYear(), initialDate.getMonth(), 1),
   );
 
+  const [focusedDate, setFocusedDate] = useState(initialDate);
+
   const goToPrevMonth = useCallback(() => {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
   }, []);
@@ -31,6 +33,22 @@ export function useCalendarState(props: CalendarWidgetProps) {
   const goToNextMonth = useCallback(() => {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   }, []);
+
+  const focusDate = useCallback(
+    (date: Date) => {
+      setFocusedDate(date);
+      // If the focused date moves out of the currently viewed month, navigate
+      const newMonth = date.getMonth();
+      const newYear = date.getFullYear();
+      setViewDate((prev) => {
+        if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
+          return new Date(newYear, newMonth, 1);
+        }
+        return prev;
+      });
+    },
+    [],
+  );
 
   const weeks = useMemo(
     () => getCalendarDays(viewDate.getFullYear(), viewDate.getMonth(), weekStartsOn),
@@ -63,11 +81,13 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   return {
     viewDate,
+    focusedDate,
     weeks,
     monthYearLabel,
     goToPrevMonth,
     goToNextMonth,
     selectDate,
+    focusDate,
     isSelected,
   };
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { CalendarDayCell } from './CalendarDayCell';
 import { isSameDay, isDateInRange, isDateDisabled } from '../utils/dates';
 import type { CalendarGridProps } from '../types/calendar';
@@ -20,6 +20,26 @@ function getWeekdayHeaders(weekStartsOn: number, locale?: string): string[] {
   );
 }
 
+function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+function getFirstDayOfWeek(date: Date, weekStartsOn: number): Date {
+  const day = date.getDay();
+  const diff = (day - weekStartsOn + 7) % 7;
+  return addDays(date, -diff);
+}
+
+function getLastDayOfWeek(date: Date, weekStartsOn: number): Date {
+  return addDays(getFirstDayOfWeek(date, weekStartsOn), 6);
+}
+
+function sameMonth(date: Date, month: number, year: number): boolean {
+  return date.getMonth() === month && date.getFullYear() === year;
+}
+
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
   weeks,
   viewDate,
@@ -29,8 +49,11 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   disabledDates = [],
   locale,
   weekStartsOn,
+  focusedDate,
   onSelectDate,
+  onFocusDate,
 }) => {
+  const tableRef = useRef<HTMLTableElement>(null);
   const today = new Date();
   const headers = getWeekdayHeaders(weekStartsOn, locale);
 
@@ -41,12 +64,79 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
     return false;
   };
 
+  // Move DOM focus to the focused date cell after render
+  useEffect(() => {
+    if (!tableRef.current) return;
+    const cell = tableRef.current.querySelector<HTMLElement>(
+      'td[tabindex="0"]',
+    );
+    if (cell && tableRef.current.contains(document.activeElement)) {
+      cell.focus();
+    }
+  }, [focusedDate]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      let next: Date | null = null;
+      switch (e.key) {
+        case 'ArrowRight':
+          next = addDays(focusedDate, 1);
+          break;
+        case 'ArrowLeft':
+          next = addDays(focusedDate, -1);
+          break;
+        case 'ArrowDown':
+          next = addDays(focusedDate, 7);
+          break;
+        case 'ArrowUp':
+          next = addDays(focusedDate, -7);
+          break;
+        case 'Home':
+          next = getFirstDayOfWeek(focusedDate, weekStartsOn);
+          break;
+        case 'End':
+          next = getLastDayOfWeek(focusedDate, weekStartsOn);
+          break;
+        case 'PageDown':
+          next = new Date(
+            focusedDate.getFullYear(),
+            focusedDate.getMonth() + 1,
+            focusedDate.getDate(),
+          );
+          break;
+        case 'PageUp':
+          next = new Date(
+            focusedDate.getFullYear(),
+            focusedDate.getMonth() - 1,
+            focusedDate.getDate(),
+          );
+          break;
+        default:
+          return;
+      }
+      e.preventDefault();
+      onFocusDate(next);
+    },
+    [focusedDate, weekStartsOn, onFocusDate],
+  );
+
   return (
-    <table className="cw-grid" role="grid" aria-label="Calendar">
+    <table
+      className="cw-grid"
+      role="grid"
+      aria-label="Calendar"
+      ref={tableRef}
+      onKeyDown={handleKeyDown}
+    >
       <thead>
-        <tr>
+        <tr role="row">
           {headers.map((day) => (
-            <th key={day} className="cw-grid__weekday" scope="col">
+            <th
+              key={day}
+              className="cw-grid__weekday"
+              role="columnheader"
+              scope="col"
+            >
               {day}
             </th>
           ))}
@@ -54,18 +144,23 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
       </thead>
       <tbody>
         {weeks.map((week, rowIdx) => (
-          <tr key={rowIdx}>
+          <tr key={rowIdx} role="row">
             {week.map((date, colIdx) => (
               <CalendarDayCell
                 key={colIdx}
                 date={date}
-                isCurrentMonth={date.getMonth() === viewDate.getMonth()}
+                isCurrentMonth={sameMonth(
+                  date,
+                  viewDate.getMonth(),
+                  viewDate.getFullYear(),
+                )}
                 isToday={isSameDay(date, today)}
                 isSelected={isSelected(date)}
                 isDisabled={
                   !isDateInRange(date, minDate, maxDate) ||
                   isDateDisabled(date, disabledDates)
                 }
+                isFocusTarget={isSameDay(date, focusedDate)}
                 onSelect={onSelectDate}
               />
             ))}

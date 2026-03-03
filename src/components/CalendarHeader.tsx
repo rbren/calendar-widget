@@ -16,7 +16,9 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       >
         ‹
       </button>
-      <span className="cw-header__label">{monthYearLabel}</span>
+      <span className="cw-header__label" aria-live="polite">
+        {monthYearLabel}
+      </span>
       <button
         type="button"
         className="cw-header__nav-btn"

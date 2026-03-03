@@ -28,4 +28,10 @@ describe('CalendarHeader', () => {
     await userEvent.click(screen.getByLabelText('Next month'));
     expect(onNextMonth).toHaveBeenCalledOnce();
   });
+
+  it('has aria-live="polite" on the month/year label', () => {
+    render(<CalendarHeader {...defaultProps} />);
+    const label = screen.getByText('April 2026');
+    expect(label).toHaveAttribute('aria-live', 'polite');
+  });
 });

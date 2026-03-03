@@ -17,11 +17,13 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
 
   const {
     viewDate,
+    focusedDate,
     weeks,
     monthYearLabel,
     goToPrevMonth,
     goToNextMonth,
     selectDate,
+    focusDate,
   } = useCalendarState(props);
 
   const rootClassName = ['cw-root', className].filter(Boolean).join(' ');
@@ -43,7 +45,9 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
         disabledDates={disabledDates}
         locale={locale}
         weekStartsOn={weekStartsOn}
+        focusedDate={focusedDate}
         onSelectDate={selectDate}
+        onFocusDate={focusDate}
       />
     </div>
   );

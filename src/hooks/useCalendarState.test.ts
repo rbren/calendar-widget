@@ -123,4 +123,29 @@ describe('useCalendarState', () => {
     expect(result.current.isSelected(new Date(2026, 3, 20))).toBe(true);
     expect(result.current.isSelected(new Date(2026, 3, 15))).toBe(false);
   });
+
+  it('initializes focusedDate from value', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10) }),
+    );
+    expect(result.current.focusedDate.getDate()).toBe(10);
+    expect(result.current.focusedDate.getMonth()).toBe(3);
+  });
+
+  it('focusDate updates focusedDate', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10) }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 3, 20)));
+    expect(result.current.focusedDate.getDate()).toBe(20);
+  });
+
+  it('focusDate navigates view when moving to a different month', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10) }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 4, 10)));
+    expect(result.current.viewDate.getMonth()).toBe(4);
+    expect(result.current.viewDate.getFullYear()).toBe(2026);
+  });
 });

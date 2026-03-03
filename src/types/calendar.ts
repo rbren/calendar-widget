@@ -45,8 +45,12 @@ export interface CalendarGridProps {
   locale?: string;
   /** Day the week starts on */
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /** The date that currently holds the roving tabIndex */
+  focusedDate: Date;
   /** Called when a day is clicked */
   onSelectDate: (date: Date) => void;
+  /** Called when keyboard navigation changes the focused date */
+  onFocusDate: (date: Date) => void;
 }
 
 export interface CalendarDayCellProps {
@@ -60,6 +64,8 @@ export interface CalendarDayCellProps {
   isSelected: boolean;
   /** Whether this date is disabled */
   isDisabled: boolean;
+  /** Whether this cell has the roving tabIndex focus */
+  isFocusTarget: boolean;
   /** Called when this day is clicked */
   onSelect: (date: Date) => void;
 }
