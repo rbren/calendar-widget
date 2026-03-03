@@ -90,7 +90,14 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
     let isPreviewEnd = false;
 
     if (mode !== 'range') {
-      return { isRangeStart, isRangeEnd, isInRange, isInPreview, isPreviewStart, isPreviewEnd };
+      return {
+        isRangeStart,
+        isRangeEnd,
+        isInRange,
+        isInPreview,
+        isPreviewStart,
+        isPreviewEnd,
+      };
     }
 
     // Completed range from value
@@ -113,7 +120,14 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
       }
     }
 
-    return { isRangeStart, isRangeEnd, isInRange, isInPreview, isPreviewStart, isPreviewEnd };
+    return {
+      isRangeStart,
+      isRangeEnd,
+      isInRange,
+      isInPreview,
+      isPreviewStart,
+      isPreviewEnd,
+    };
   };
 
   // Move DOM focus to the focused date cell after render

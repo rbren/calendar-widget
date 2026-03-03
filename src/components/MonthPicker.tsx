@@ -7,7 +7,9 @@ const TOTAL_MONTHS = 12;
 
 function getMonthNames(locale?: string): string[] {
   const formatter = new Intl.DateTimeFormat(locale, { month: 'short' });
-  return Array.from({ length: 12 }, (_, i) => formatter.format(new Date(2026, i, 1)));
+  return Array.from({ length: 12 }, (_, i) =>
+    formatter.format(new Date(2026, i, 1)),
+  );
 }
 
 export const MonthPicker: React.FC<MonthPickerProps> = ({
@@ -82,7 +84,8 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({
         {rows.map((row, rowIdx) => (
           <tr key={rowIdx} role="row">
             {row.map((monthIdx) => {
-              const isCurrentView = monthIdx === currentMonth && year === currentYear;
+              const isCurrentView =
+                monthIdx === currentMonth && year === currentYear;
               const isToday = monthIdx === todayMonth && year === todayYear;
               const isFocused = monthIdx === focusedMonth;
 

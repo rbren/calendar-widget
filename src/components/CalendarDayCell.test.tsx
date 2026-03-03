@@ -126,10 +126,7 @@ describe('CalendarDayCell', () => {
     it('has an aria-label with the full date', () => {
       renderCell();
       const cell = screen.getByRole('gridcell');
-      expect(cell).toHaveAttribute(
-        'aria-label',
-        'Wednesday, April 15, 2026',
-      );
+      expect(cell).toHaveAttribute('aria-label', 'Wednesday, April 15, 2026');
     });
 
     it('includes (today) in aria-label when isToday', () => {
@@ -153,9 +150,7 @@ describe('CalendarDayCell', () => {
     it('combines multiple statuses in aria-label', () => {
       renderCell({ isToday: true, isSelected: true });
       const cell = screen.getByRole('gridcell');
-      expect(cell.getAttribute('aria-label')).toContain(
-        '(today, selected)',
-      );
+      expect(cell.getAttribute('aria-label')).toContain('(today, selected)');
     });
 
     it('includes marker label in aria-label', () => {

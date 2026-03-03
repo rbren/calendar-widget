@@ -58,17 +58,19 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     return monthYearLabel;
   }, [activeView, viewDate, yearRangeStart, monthYearLabel]);
 
-  const handlePrev = activeView === 'years'
-    ? goToPrevYearRange
-    : activeView === 'months'
-      ? goToPrevYear
-      : goToPrevMonth;
+  const handlePrev =
+    activeView === 'years'
+      ? goToPrevYearRange
+      : activeView === 'months'
+        ? goToPrevYear
+        : goToPrevMonth;
 
-  const handleNext = activeView === 'years'
-    ? goToNextYearRange
-    : activeView === 'months'
-      ? goToNextYear
-      : goToNextMonth;
+  const handleNext =
+    activeView === 'years'
+      ? goToNextYearRange
+      : activeView === 'months'
+        ? goToNextYear
+        : goToNextMonth;
 
   // Only allow drill-up from days and months views
   const canDrillUp = quickNavigation && activeView !== 'years';

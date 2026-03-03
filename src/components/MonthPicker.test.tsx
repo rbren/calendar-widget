@@ -101,9 +101,7 @@ describe('MonthPicker', () => {
   });
 
   it('does not go below 0 when pressing ArrowLeft at January', () => {
-    render(
-      <MonthPicker {...defaultProps} currentMonth={0} />,
-    );
+    render(<MonthPicker {...defaultProps} currentMonth={0} />);
     const cells = screen.getAllByRole('gridcell');
     expect(cells[0]).toHaveAttribute('tabindex', '0');
     fireEvent.keyDown(cells[0], { key: 'ArrowLeft' });
@@ -111,9 +109,7 @@ describe('MonthPicker', () => {
   });
 
   it('does not exceed 11 when pressing ArrowRight at December', () => {
-    render(
-      <MonthPicker {...defaultProps} currentMonth={11} />,
-    );
+    render(<MonthPicker {...defaultProps} currentMonth={11} />);
     const cells = screen.getAllByRole('gridcell');
     expect(cells[11]).toHaveAttribute('tabindex', '0');
     fireEvent.keyDown(cells[11], { key: 'ArrowRight' });

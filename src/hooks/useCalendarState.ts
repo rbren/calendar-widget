@@ -67,15 +67,16 @@ export function useCalendarState(props: CalendarWidgetProps) {
   const typeChanged =
     (valueDate !== null) !== (prevValueDate !== null) ||
     (valueRange !== null) !== (prevValueRange !== null);
-  const nullChanged =
-    (value == null) !== (prevValue == null);
+  const nullChanged = (value == null) !== (prevValue == null);
 
   const valueChanged =
-    value !== prevValue && (singleChanged || rangeChanged || typeChanged || nullChanged);
+    value !== prevValue &&
+    (singleChanged || rangeChanged || typeChanged || nullChanged);
 
   if (valueChanged) {
     setPrevValue(value);
-    const syncDate = value instanceof Date ? value : isDateRange(value) ? value.start : null;
+    const syncDate =
+      value instanceof Date ? value : isDateRange(value) ? value.start : null;
     if (syncDate) {
       const newMonth = syncDate.getMonth();
       const newYear = syncDate.getFullYear();

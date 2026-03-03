@@ -115,7 +115,9 @@ describe('isDateDisabled', () => {
 
 describe('isDateRange', () => {
   it('returns true for an object with start and end Dates', () => {
-    expect(isDateRange({ start: new Date(2026, 0, 1), end: new Date(2026, 0, 10) })).toBe(true);
+    expect(
+      isDateRange({ start: new Date(2026, 0, 1), end: new Date(2026, 0, 10) }),
+    ).toBe(true);
   });
 
   it('returns false for a plain Date', () => {
@@ -137,23 +139,53 @@ describe('isDateRange', () => {
 
 describe('isDateBetween', () => {
   it('returns true for a date strictly between start and end', () => {
-    expect(isDateBetween(new Date(2026, 0, 5), new Date(2026, 0, 1), new Date(2026, 0, 10))).toBe(true);
+    expect(
+      isDateBetween(
+        new Date(2026, 0, 5),
+        new Date(2026, 0, 1),
+        new Date(2026, 0, 10),
+      ),
+    ).toBe(true);
   });
 
   it('returns false for the start date', () => {
-    expect(isDateBetween(new Date(2026, 0, 1), new Date(2026, 0, 1), new Date(2026, 0, 10))).toBe(false);
+    expect(
+      isDateBetween(
+        new Date(2026, 0, 1),
+        new Date(2026, 0, 1),
+        new Date(2026, 0, 10),
+      ),
+    ).toBe(false);
   });
 
   it('returns false for the end date', () => {
-    expect(isDateBetween(new Date(2026, 0, 10), new Date(2026, 0, 1), new Date(2026, 0, 10))).toBe(false);
+    expect(
+      isDateBetween(
+        new Date(2026, 0, 10),
+        new Date(2026, 0, 1),
+        new Date(2026, 0, 10),
+      ),
+    ).toBe(false);
   });
 
   it('returns false for a date outside the range', () => {
-    expect(isDateBetween(new Date(2026, 0, 15), new Date(2026, 0, 1), new Date(2026, 0, 10))).toBe(false);
+    expect(
+      isDateBetween(
+        new Date(2026, 0, 15),
+        new Date(2026, 0, 1),
+        new Date(2026, 0, 10),
+      ),
+    ).toBe(false);
   });
 
   it('works when start and end are swapped', () => {
-    expect(isDateBetween(new Date(2026, 0, 5), new Date(2026, 0, 10), new Date(2026, 0, 1))).toBe(true);
+    expect(
+      isDateBetween(
+        new Date(2026, 0, 5),
+        new Date(2026, 0, 10),
+        new Date(2026, 0, 1),
+      ),
+    ).toBe(true);
   });
 });
 
@@ -180,9 +212,9 @@ describe('formatDayLabel', () => {
   });
 
   it('appends (today) when isToday', () => {
-    expect(
-      formatDayLabel(date, 'en-US', { ...noFlags, isToday: true }),
-    ).toBe('Sunday, March 15, 2026 (today)');
+    expect(formatDayLabel(date, 'en-US', { ...noFlags, isToday: true })).toBe(
+      'Sunday, March 15, 2026 (today)',
+    );
   });
 
   it('appends (selected) when isSelected', () => {
@@ -230,9 +262,9 @@ describe('formatDayLabel', () => {
   });
 
   it('appends in selected range status', () => {
-    expect(
-      formatDayLabel(date, 'en-US', { ...noFlags, isInRange: true }),
-    ).toBe('Sunday, March 15, 2026 (in selected range)');
+    expect(formatDayLabel(date, 'en-US', { ...noFlags, isInRange: true })).toBe(
+      'Sunday, March 15, 2026 (in selected range)',
+    );
   });
 
   it('includes marker label before statuses', () => {

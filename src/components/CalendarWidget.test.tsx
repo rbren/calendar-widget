@@ -148,13 +148,7 @@ describe('CalendarWidget range mode', () => {
       start: new Date(2026, 3, 5),
       end: new Date(2026, 3, 10),
     };
-    render(
-      <CalendarWidget
-        mode="range"
-        value={rangeValue}
-        locale="en-US"
-      />,
-    );
+    render(<CalendarWidget mode="range" value={rangeValue} locale="en-US" />);
 
     const startCell = getDay(5);
     const endCell = getDay(10);
@@ -265,9 +259,7 @@ describe('CalendarWidget range mode', () => {
 
 describe('CalendarWidget quick navigation', () => {
   it('renders heading as a button by default (quickNavigation=true)', () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     const btn = screen.getByRole('button', { name: /choose month and year/i });
     expect(btn).toBeInTheDocument();
     expect(btn).toHaveTextContent('March 2026');
@@ -288,25 +280,25 @@ describe('CalendarWidget quick navigation', () => {
   });
 
   it('opens month picker when heading is clicked', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
 
     // Month picker should appear
-    expect(screen.getByRole('grid', { name: /month picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
     // Day grid should be gone
-    expect(screen.queryByRole('grid', { name: 'Calendar' })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('grid', { name: 'Calendar' }),
+    ).not.toBeInTheDocument();
     // Header should show year
     expect(screen.getByText('2026')).toBeInTheDocument();
   });
 
   it('selects a month from month picker and returns to day grid', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     // Open month picker
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
@@ -317,52 +309,50 @@ describe('CalendarWidget quick navigation', () => {
     // Back to day grid showing June
     expect(screen.getByRole('grid', { name: 'Calendar' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /choose month and year, currently june 2026/i }),
+      screen.getByRole('button', {
+        name: /choose month and year, currently june 2026/i,
+      }),
     ).toBeInTheDocument();
   });
 
   it('opens year picker from month picker heading', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     // Open month picker
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
     // Click year heading to open year picker
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
 
     // Year picker should appear
-    expect(screen.getByRole('grid', { name: /year picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /year picker/i }),
+    ).toBeInTheDocument();
     // Month picker should be gone
-    expect(screen.queryByRole('grid', { name: /month picker/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('grid', { name: /month picker/i }),
+    ).not.toBeInTheDocument();
   });
 
   it('selects year from year picker and returns to month picker', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     // Open month picker
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
     // Open year picker
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
     // Click 2020 (within the 2016-2027 range)
     await userEvent.click(screen.getByText('2020'));
 
     // Back to month picker for 2020
-    expect(screen.getByRole('grid', { name: /month picker, 2020/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker, 2020/i }),
+    ).toBeInTheDocument();
   });
 
   it('full flow: heading → month picker → year picker → select year → select month → day grid', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
 
     // Day grid visible
     expect(screen.getByRole('grid', { name: 'Calendar' })).toBeInTheDocument();
@@ -371,17 +361,21 @@ describe('CalendarWidget quick navigation', () => {
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
-    expect(screen.getByRole('grid', { name: /month picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
 
     // 2. Click year label → year picker
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
-    expect(screen.getByRole('grid', { name: /year picker/i })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
+    expect(
+      screen.getByRole('grid', { name: /year picker/i }),
+    ).toBeInTheDocument();
 
     // 3. Select year 2022 (within the 2016-2027 range)
     await userEvent.click(screen.getByText('2022'));
-    expect(screen.getByRole('grid', { name: /month picker, 2022/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker, 2022/i }),
+    ).toBeInTheDocument();
 
     // 4. Select August
     await userEvent.click(screen.getByText('Aug'));
@@ -394,13 +388,13 @@ describe('CalendarWidget quick navigation', () => {
   });
 
   it('Escape in month picker returns to day grid', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
-    expect(screen.getByRole('grid', { name: /month picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
 
     // Press Escape
     const grid = screen.getByRole('grid', { name: /month picker/i });
@@ -412,16 +406,14 @@ describe('CalendarWidget quick navigation', () => {
   });
 
   it('Escape in year picker returns to month picker', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
-    expect(screen.getByRole('grid', { name: /year picker/i })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
+    expect(
+      screen.getByRole('grid', { name: /year picker/i }),
+    ).toBeInTheDocument();
 
     // Press Escape
     const grid = screen.getByRole('grid', { name: /year picker/i });
@@ -429,13 +421,13 @@ describe('CalendarWidget quick navigation', () => {
     fireEvent.keyDown(cell, { key: 'Escape' });
 
     // Back to month picker
-    expect(screen.getByRole('grid', { name: /month picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
   });
 
   it('prev/next arrows change year in month picker view', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
@@ -449,15 +441,11 @@ describe('CalendarWidget quick navigation', () => {
   });
 
   it('prev/next arrows change year range in year picker view', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
 
     // Year range should include 2026: 2016-2027
     expect(screen.getByText('2016')).toBeInTheDocument();
@@ -474,25 +462,21 @@ describe('CalendarWidget quick navigation', () => {
   });
 
   it('keyboard Enter on heading opens month picker', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     const btn = screen.getByRole('button', { name: /choose month and year/i });
     btn.focus();
     await userEvent.keyboard('{Enter}');
-    expect(screen.getByRole('grid', { name: /month picker/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
   });
 
   it('heading in year picker view is not clickable (no further drill-up)', async () => {
-    render(
-      <CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />,
-    );
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
     await userEvent.click(
       screen.getByRole('button', { name: /choose month and year/i }),
     );
-    await userEvent.click(
-      screen.getByRole('button', { name: /choose year/i }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
 
     // Year range label should not be a button
     expect(
