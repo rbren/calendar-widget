@@ -12,7 +12,7 @@
       "import": "./dist/calendar-widget.mjs",
       "require": "./dist/calendar-widget.cjs"
     },
-    "./style.css": "./dist/core.css"
+    "./style.css": "./dist/style.css"
   },
   "files": [
     "dist"
