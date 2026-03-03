@@ -6,10 +6,13 @@ The calendar header displays the current month and year with previous/next butto
 
 ```
   ‹   March 2026   ›
+         Today
 ```
 
 - Click **‹** to go to the previous month.
 - Click **›** to go to the next month.
+- Click **Today** to jump to the current month (see [Today Button](./today-button.md)).
+- Click the **month/year heading** to open the month picker (see [Quick Navigation](./quick-navigation.md)).
 
 ## Initial view
 
@@ -26,12 +29,21 @@ When focus is inside the calendar grid:
 
 The view automatically follows keyboard focus — if you arrow or page into a different month, the calendar navigates there.
 
+## Quick navigation
+
+Click the month/year heading to drill up into a month picker, then a year picker. See [Quick Navigation](./quick-navigation.md) for details.
+
 ## Programmatic navigation
 
-If you use the `useCalendarState` hook directly, you can call `goToPrevMonth()` and `goToNextMonth()` from your own UI:
+If you use the `useCalendarState` hook directly, you can call navigation functions from your own UI:
 
 ```tsx
-const { goToPrevMonth, goToNextMonth, monthYearLabel } = useCalendarState({
+const {
+  goToPrevMonth,
+  goToNextMonth,
+  goToToday,
+  monthYearLabel,
+} = useCalendarState({
   value: date,
   onChange: setDate,
 });
@@ -39,4 +51,5 @@ const { goToPrevMonth, goToNextMonth, monthYearLabel } = useCalendarState({
 <button onClick={goToPrevMonth}>Back</button>
 <span>{monthYearLabel}</span>
 <button onClick={goToNextMonth}>Forward</button>
+<button onClick={goToToday}>Today</button>
 ```

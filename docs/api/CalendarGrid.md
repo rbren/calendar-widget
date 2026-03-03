@@ -27,6 +27,7 @@ import { CalendarGrid } from '@calendar-widget/core';
 | `onSelectDate` | `(date: Date) => void` | — | Called when a day is clicked or activated via keyboard. |
 | `onFocusDate` | `(date: Date) => void` | — | Called when keyboard navigation changes the focused date. |
 | `onHoverDate` | `(date: Date \| null) => void` | `undefined` | Called when a day is hovered (for range preview) or the grid is mouse-left (`null`). |
+| `renderDay` | `(dayNumber: ReactNode, info: DayRenderInfo) => ReactNode` | `undefined` | Custom render function for day cell content. Passed through to each `CalendarDayCell`. |
 
 ## Keyboard navigation
 

@@ -10,6 +10,7 @@ import {
   isDateDisabled,
   isDateRange,
   isDateBetween,
+  getISOWeekNumber,
   formatMonthYear,
   formatDayLabel,
 } from '@calendar-widget/core';
@@ -138,6 +139,24 @@ const end = new Date(2026, 2, 20);
 isDateBetween(new Date(2026, 2, 15), start, end); // true
 isDateBetween(new Date(2026, 2, 10), start, end); // false (exclusive)
 isDateBetween(new Date(2026, 2, 20), start, end); // false (exclusive)
+```
+
+---
+
+## getISOWeekNumber
+
+```ts
+function getISOWeekNumber(date: Date): number
+```
+
+Returns the ISO 8601 week number (1–53) for a given date. Week 1 is the week containing the first Thursday of the year.
+
+**Example:**
+
+```ts
+getISOWeekNumber(new Date(2026, 0, 1));  // 1
+getISOWeekNumber(new Date(2026, 2, 15)); // 11
+getISOWeekNumber(new Date(2025, 11, 29)); // 1 (belongs to ISO week 1 of 2026)
 ```
 
 ---

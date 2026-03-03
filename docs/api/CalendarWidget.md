@@ -1,12 +1,14 @@
 # CalendarWidget
 
-The main calendar component. Renders a month view with navigation, weekday headers, and a date grid. Supports single date selection and date range selection.
+The main calendar component. Renders a month view with navigation, weekday headers, and a date grid. Supports single date and date range selection, quick month/year drill-up navigation, a "Today" button, ISO week numbers, custom day rendering, and lifecycle callbacks.
 
 ```tsx
 import { CalendarWidget } from '@calendar-widget/core';
 ```
 
-## DateRange
+## Types
+
+### DateRange
 
 The `DateRange` type represents a start/end date pair, used with `mode="range"`:
 
@@ -16,6 +18,29 @@ import type { DateRange } from '@calendar-widget/core';
 interface DateRange {
   start: Date;
   end: Date;
+}
+```
+
+### CalendarView
+
+Represents the current drill-up view:
+
+```ts
+type CalendarView = 'days' | 'months' | 'years';
+```
+
+### DayRenderInfo
+
+Context object passed to the `renderDay` callback:
+
+```ts
+interface DayRenderInfo {
+  date: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  isSelected: boolean;
+  isDisabled: boolean;
+  isInRange?: boolean;
 }
 ```
 
@@ -31,6 +56,13 @@ interface DateRange {
 | `maxDate` | `Date` | `undefined` | Latest selectable date (inclusive). Dates after this are rendered as disabled. |
 | `disabledDates` | `Date[]` | `[]` | Array of specific dates to disable. Compared by calendar day (time is ignored). |
 | `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | `0` | Day the week starts on. `0` = Sunday, `1` = Monday, etc. |
+| `showWeekNumbers` | `boolean` | `false` | When `true`, an extra column displays the ISO 8601 week number for each row. |
+| `quickNavigation` | `boolean` | `true` | When `true`, the month/year heading is clickable and drills up into a month picker, then a year picker. Set to `false` to disable this behavior. |
+| `showTodayButton` | `boolean` | `true` | When `true`, a "Today" button appears below the navigation bar for quick return to the current month. |
+| `todayButtonLabel` | `string` | `"Today"` | Custom label text for the today button. Useful for internationalization. |
+| `renderDay` | `(dayNumber: ReactNode, info: DayRenderInfo) => ReactNode` | `undefined` | Custom render function for day cell content. Receives the default day number element and a `DayRenderInfo` context object. Return a `ReactNode` to replace the default content. |
+| `onMonthChange` | `(month: Date) => void` | `undefined` | Called when the displayed month changes via prev/next buttons, quick navigation, the today button, or keyboard navigation that crosses a month boundary. Receives a `Date` representing the 1st of the new month. Does **not** fire on initial mount or when the parent updates the `value` prop. |
+| `onDayFocus` | `(date: Date) => void` | `undefined` | Called when keyboard focus moves to a new day cell. Useful for showing previews or loading details for the focused date. |
 | `className` | `string` | `undefined` | Additional CSS class name applied to the root `<div>`. Useful for scoping CSS custom property overrides. |
 
 ## Usage
@@ -78,12 +110,62 @@ In range mode, the first click sets the start date and a hover preview highlight
 />
 ```
 
+### Week numbers
+
+```tsx
+<CalendarWidget value={date} onChange={setDate} showWeekNumbers />
+```
+
+### Custom day rendering
+
+```tsx
+const holidays = new Set(['2026-07-04', '2026-12-25']);
+
+<CalendarWidget
+  value={date}
+  onChange={setDate}
+  renderDay={(dayNumber, info) => {
+    const key = info.date.toISOString().slice(0, 10);
+    return (
+      <span>
+        {dayNumber}
+        {holidays.has(key) && <span style={{ color: 'red' }}> 🎉</span>}
+      </span>
+    );
+  }}
+/>
+```
+
+### Lifecycle callbacks
+
+```tsx
+<CalendarWidget
+  value={date}
+  onChange={setDate}
+  onMonthChange={(month) => console.log('Now viewing:', month)}
+  onDayFocus={(date) => console.log('Focused on:', date)}
+/>
+```
+
+### Disabling quick navigation and the today button
+
+```tsx
+<CalendarWidget
+  value={date}
+  onChange={setDate}
+  quickNavigation={false}
+  showTodayButton={false}
+/>
+```
+
 ## Internal structure
 
-`CalendarWidget` composes three sub-components:
+`CalendarWidget` composes several sub-components depending on the active view:
 
-1. **[CalendarHeader](./CalendarHeader.md)** — month/year label and prev/next buttons
-2. **[CalendarGrid](./CalendarGrid.md)** — weekday headers and the 6×7 date grid
+1. **[CalendarHeader](./CalendarHeader.md)** — month/year label, prev/next buttons, and today button
+2. **[CalendarGrid](./CalendarGrid.md)** — weekday headers and the 6×7 date grid (shown in `days` view)
 3. **[CalendarDayCell](./CalendarDayCell.md)** — individual day cell
+4. **[MonthPicker](./MonthPicker.md)** — 4×3 month selection grid (shown in `months` view)
+5. **[YearPicker](./YearPicker.md)** — 4×3 year selection grid (shown in `years` view)
 
 State is managed by the **[useCalendarState](./useCalendarState.md)** hook.

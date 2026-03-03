@@ -113,3 +113,15 @@ body {
   border-radius: 6px;
   background: #fff;
 }
+
+.log {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #475569;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  min-height: 2rem;
+  line-height: 1.6;
+}

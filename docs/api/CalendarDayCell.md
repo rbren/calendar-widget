@@ -28,6 +28,7 @@ import { CalendarDayCell } from '@calendar-widget/core';
 | `onHover` | `(date: Date \| null) => void` | `undefined` | Called when the mouse enters this cell. |
 | `locale` | `string` | `undefined` | Locale for formatting the accessible date label. |
 | `markerLabel` | `string` | `undefined` | Optional marker/event label to include in the accessible name. |
+| `renderDay` | `(dayNumber: ReactNode, info: DayRenderInfo) => ReactNode` | `undefined` | Custom render function for day cell content. When provided, the return value replaces the default day number element. Receives the default content and a `DayRenderInfo` context. |
 
 ## Accessibility
 

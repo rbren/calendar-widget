@@ -9,9 +9,12 @@ A complete React app showcasing all CalendarWidget features:
 - Constrained range selection (min/max bounds)
 - Min/max date range
 - Disabled dates
-- Localization (locale picker)
-- Custom week start day
+- Localization (locale picker + week start day)
 - Multi-date selection
+- ISO week numbers
+- Custom day rendering (emoji markers via `renderDay`)
+- Lifecycle callbacks (`onMonthChange` / `onDayFocus` event log)
+- Quick navigation disabled mode
 - Dark theme
 - Round cells theme
 - Compact theme

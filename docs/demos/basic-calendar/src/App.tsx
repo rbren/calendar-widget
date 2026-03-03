@@ -199,6 +199,114 @@ function MultiSelectDemo() {
   );
 }
 
+function WeekNumbersDemo() {
+  const [date, setDate] = useState<Date | null>(null);
+  return (
+    <div className="demo-card">
+      <h2>Week Numbers</h2>
+      <p className="description">
+        ISO 8601 week numbers displayed in the first column.
+      </p>
+      <CalendarWidget
+        value={date}
+        onChange={setDate}
+        showWeekNumbers
+        weekStartsOn={1}
+      />
+      <p className="selection">
+        {date ? `Selected: ${date.toLocaleDateString()}` : 'No date selected'}
+      </p>
+    </div>
+  );
+}
+
+function CustomRenderDayDemo() {
+  const [date, setDate] = useState<Date | null>(null);
+  const events: Record<string, string> = {
+    [`${year}-${String(month + 1).padStart(2, '0')}-05`]: '🎂',
+    [`${year}-${String(month + 1).padStart(2, '0')}-14`]: '❤️',
+    [`${year}-${String(month + 1).padStart(2, '0')}-22`]: '🎉',
+  };
+
+  return (
+    <div className="demo-card">
+      <h2>Custom Day Rendering</h2>
+      <p className="description">
+        Emoji markers on specific dates using the renderDay prop.
+      </p>
+      <CalendarWidget
+        value={date}
+        onChange={setDate}
+        renderDay={(dayNumber, info) => {
+          const key = `${info.date.getFullYear()}-${String(info.date.getMonth() + 1).padStart(2, '0')}-${String(info.date.getDate()).padStart(2, '0')}`;
+          const emoji = events[key];
+          return emoji ? (
+            <span>{dayNumber} {emoji}</span>
+          ) : (
+            dayNumber
+          );
+        }}
+      />
+      <p className="selection">
+        {date ? `Selected: ${date.toLocaleDateString()}` : 'No date selected'}
+      </p>
+    </div>
+  );
+}
+
+function LifecycleCallbacksDemo() {
+  const [date, setDate] = useState<Date | null>(null);
+  const [log, setLog] = useState<string[]>([]);
+
+  const addLog = (msg: string) =>
+    setLog((prev) => [...prev.slice(-4), msg]);
+
+  return (
+    <div className="demo-card">
+      <h2>Lifecycle Callbacks</h2>
+      <p className="description">
+        onMonthChange and onDayFocus events logged below the calendar.
+      </p>
+      <CalendarWidget
+        value={date}
+        onChange={setDate}
+        onMonthChange={(m) =>
+          addLog(`Month → ${m.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}`)
+        }
+        onDayFocus={(d) =>
+          addLog(`Focus → ${d.toLocaleDateString()}`)
+        }
+      />
+      <div className="log">
+        {log.length === 0
+          ? 'Navigate or use arrow keys to see events…'
+          : log.map((entry, i) => <div key={i}>{entry}</div>)}
+      </div>
+    </div>
+  );
+}
+
+function NoQuickNavDemo() {
+  const [date, setDate] = useState<Date | null>(null);
+  return (
+    <div className="demo-card">
+      <h2>No Quick Nav / No Today</h2>
+      <p className="description">
+        Quick navigation and today button disabled.
+      </p>
+      <CalendarWidget
+        value={date}
+        onChange={setDate}
+        quickNavigation={false}
+        showTodayButton={false}
+      />
+      <p className="selection">
+        {date ? `Selected: ${date.toLocaleDateString()}` : 'No date selected'}
+      </p>
+    </div>
+  );
+}
+
 function DarkThemeDemo() {
   const [date, setDate] = useState<Date | null>(null);
   return (
@@ -272,6 +380,10 @@ export default function App() {
         <DisabledDatesDemo />
         <LocaleDemo />
         <MultiSelectDemo />
+        <WeekNumbersDemo />
+        <CustomRenderDayDemo />
+        <LifecycleCallbacksDemo />
+        <NoQuickNavDemo />
         <DarkThemeDemo />
         <RoundThemeDemo />
         <CompactDemo />
