@@ -3,7 +3,7 @@ tag: architecture
 state: closed
 ---
 
-# 0048 -- `sideEffects: false` May Cause Bundlers to Drop CSS Imports
+# 0076 -- `sideEffects: false` May Cause Bundlers to Drop CSS Imports
 
 ## Problem
 
