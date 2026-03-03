@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0046 — `.tracker/` Directory Files Are Committed to the Repository
