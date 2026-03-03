@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0055 — `useCalendarState` Does Not Sync With External `value` Changes
@@ -63,3 +63,16 @@ When `value` is `null` or an array, decide on reasonable behavior:
 3. Changing `value` to `null` should not crash or navigate unexpectedly.
 4. Internal navigation (clicking prev/next month) should still work normally after an external value update.
 5. All existing tests continue to pass.
+
+## Architect Notes
+
+Closed as of commit `a87c45d` (review at `2026-03-03T20:00Z`).
+
+Implementation uses a render-time synchronization pattern (`prevValue` state comparison) instead of `useEffect`, which avoids an extra render cycle. Commits `e25b76f` and `aef8c6b` implement the fix with comprehensive tests in `useCalendarState.test.ts` covering:
+- Syncing viewDate when value changes to a different month
+- Syncing focusedDate when value changes to a different day
+- No crash when value changes to null
+- Internal navigation still works after external update
+- viewDate stability when value changes within the same month
+
+**Note:** The formatting of the implementation files does not pass `prettier --check`. This is tracked in issue 0058.

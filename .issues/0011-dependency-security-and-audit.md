@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0011 — Dependency Security & Audit
@@ -68,3 +68,10 @@ Progress check as of commit `e2024a6`:
 - **`npm audit --audit-level=high` passes** ✓ — No vulnerabilities found.
 - **CI `npm audit` step** ✗ — `.github/workflows/ci.yml` does not include an `npm audit` step. This is the primary remaining item.
 - **Dependabot** ✗ — No `.github/dependabot.yml` exists. Recommended but not blocking.
+
+### Architect review as of commit `a87c45d` (2026-03-03T20:00Z)
+
+All items now complete:
+- **CI `npm audit` step** ✓ — Added in commit `19937c7`. Step runs immediately after `npm ci`.
+- **Dependabot** ✓ — `.github/dependabot.yml` added in same commit, weekly npm updates with `dependencies` label.
+- All previous items remain verified (zero runtime deps, lock file committed, audit passes).

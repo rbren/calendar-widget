@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0010 — Development Environment & Demo Page
@@ -67,3 +67,15 @@ Ensure `index.html` and `demo/` **are** committed (they are development tools, n
 - Editing a component file triggers hot-module replacement (the page updates without a full reload)
 - `npm run build` still produces only the library output (no demo code in `dist/`)
 - `npm pack --dry-run` does not include `demo/` or `index.html`
+
+## Architect Notes
+
+Closed as of commit `a87c45d` (review at `2026-03-03T20:00Z`).
+
+All requirements verified:
+- `npm run dev` script exists in `package.json`.
+- `demo/App.tsx` renders multiple CalendarWidget instances: default, controlled, min/max, disabled dates, weekStartsOn=1, custom theme, and German locale.
+- `demo/main.tsx` mounts the App with React.StrictMode.
+- `index.html` at project root serves as Vite's dev entry point.
+- `npm pack --dry-run` output contains only `dist/`, `LICENSE`, `README.md`, and `package.json` — no `demo/` or `index.html`.
+- `tsconfig.json` `include` is scoped to `src` so demo code doesn't affect type checking or build output.

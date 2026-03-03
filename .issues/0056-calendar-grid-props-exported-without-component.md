@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0056 — `CalendarGridProps` Type Exported Without `CalendarGrid` Component
@@ -66,3 +66,9 @@ export type {
 - `npm run build` succeeds.
 - `npm run typecheck` succeeds.
 - All existing tests pass.
+
+## Architect Notes
+
+Closed as of commit `a87c45d` (review at `2026-03-03T20:00Z`).
+
+Option A was implemented in commit `a87c45d`: `CalendarGrid` is now exported from the barrel alongside `CalendarWidget`, `CalendarHeader`, and `CalendarDayCell`. Additionally, `useCalendarState` hook and all date utility functions were also added to the barrel export. See issue 0060 for a review of the overall public API surface.
