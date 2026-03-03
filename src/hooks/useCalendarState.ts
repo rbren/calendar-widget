@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import {
   getCalendarDays,
   isSameDay,
@@ -25,6 +25,34 @@ export function useCalendarState(props: CalendarWidgetProps) {
   );
 
   const [focusedDate, setFocusedDate] = useState(initialDate);
+
+  const prevValueRef = useRef(value);
+
+  useEffect(() => {
+    const prevValue = prevValueRef.current;
+    prevValueRef.current = value;
+
+    if (value instanceof Date) {
+      const changed =
+        !(prevValue instanceof Date) || !isSameDay(prevValue, value);
+      if (!changed) return;
+
+      const newMonth = value.getMonth();
+      const newYear = value.getFullYear();
+      setViewDate((prev) => {
+        if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
+          return new Date(newYear, newMonth, 1);
+        }
+        return prev;
+      });
+      setFocusedDate((prev) => {
+        if (!isSameDay(prev, value)) {
+          return value;
+        }
+        return prev;
+      });
+    }
+  }, [value]);
 
   const goToPrevMonth = useCallback(() => {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));

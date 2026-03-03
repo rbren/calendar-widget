@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0055 — `useCalendarState` Does Not Sync With External `value` Changes

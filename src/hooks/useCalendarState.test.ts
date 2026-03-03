@@ -144,4 +144,67 @@ describe('useCalendarState', () => {
     expect(result.current.viewDate.getMonth()).toBe(4);
     expect(result.current.viewDate.getFullYear()).toBe(2026);
   });
+
+  it('syncs viewDate when value prop changes to a different month', () => {
+    const { result, rerender } = renderHook(
+      (props) => useCalendarState(props),
+      { initialProps: { value: new Date(2026, 2, 15) } },
+    );
+    expect(result.current.viewDate.getMonth()).toBe(2);
+
+    rerender({ value: new Date(2026, 7, 1) });
+    expect(result.current.viewDate.getMonth()).toBe(7);
+    expect(result.current.viewDate.getFullYear()).toBe(2026);
+  });
+
+  it('syncs focusedDate when value prop changes to a different day', () => {
+    const { result, rerender } = renderHook(
+      (props) => useCalendarState(props),
+      { initialProps: { value: new Date(2026, 2, 15) } },
+    );
+    expect(result.current.focusedDate.getDate()).toBe(15);
+
+    rerender({ value: new Date(2026, 7, 20) });
+    expect(result.current.focusedDate.getMonth()).toBe(7);
+    expect(result.current.focusedDate.getDate()).toBe(20);
+  });
+
+  it('does not crash or navigate when value changes to null', () => {
+    const { result, rerender } = renderHook(
+      (props) => useCalendarState(props),
+      { initialProps: { value: new Date(2026, 2, 15) as Date | null } },
+    );
+    expect(result.current.viewDate.getMonth()).toBe(2);
+
+    rerender({ value: null });
+    // View stays on the previous month — no jarring jump
+    expect(result.current.viewDate.getMonth()).toBe(2);
+  });
+
+  it('internal navigation still works after an external value update', () => {
+    const { result, rerender } = renderHook(
+      (props) => useCalendarState(props),
+      { initialProps: { value: new Date(2026, 2, 15) } },
+    );
+    rerender({ value: new Date(2026, 7, 1) });
+    expect(result.current.viewDate.getMonth()).toBe(7);
+
+    act(() => result.current.goToPrevMonth());
+    expect(result.current.viewDate.getMonth()).toBe(6);
+
+    act(() => result.current.goToNextMonth());
+    expect(result.current.viewDate.getMonth()).toBe(7);
+  });
+
+  it('keeps viewDate stable when value changes within the same month', () => {
+    const { result, rerender } = renderHook(
+      (props) => useCalendarState(props),
+      { initialProps: { value: new Date(2026, 3, 10) } },
+    );
+    const prevViewDate = result.current.viewDate;
+
+    rerender({ value: new Date(2026, 3, 20) });
+    // Same month — viewDate reference should be identical (no re-render churn)
+    expect(result.current.viewDate).toBe(prevViewDate);
+  });
 });
