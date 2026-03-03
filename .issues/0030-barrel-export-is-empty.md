@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0030 — Barrel Export (`src/index.ts`) Is Empty
