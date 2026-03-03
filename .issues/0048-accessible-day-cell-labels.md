@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: review
+state: closed
 ---
 
 # 0048 — Accessible Day Cell Labels (aria-label)
