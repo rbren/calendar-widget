@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0059 — Duplicate Issue Number 0048

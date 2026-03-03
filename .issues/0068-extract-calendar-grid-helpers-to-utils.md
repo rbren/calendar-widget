@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0068 — Extract CalendarGrid Helper Functions to `utils/dates.ts`
