@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: review
+state: closed
 ---
 
 # 0021 — Month Change & Lifecycle Callbacks
