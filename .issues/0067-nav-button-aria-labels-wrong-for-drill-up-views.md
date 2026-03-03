@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0067 — Navigation Button Aria-Labels Incorrect for Drill-Up Views

@@ -36,6 +36,39 @@ describe('CalendarHeader', () => {
   });
 });
 
+describe('CalendarHeader nav button aria-labels per view', () => {
+  const baseProps = {
+    viewDate: new Date(2026, 3, 1),
+    monthYearLabel: 'April 2026',
+    onPrevMonth: vi.fn(),
+    onNextMonth: vi.fn(),
+  };
+
+  it('uses "Previous month" / "Next month" for days view (default)', () => {
+    render(<CalendarHeader {...baseProps} />);
+    expect(screen.getByLabelText('Previous month')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next month')).toBeInTheDocument();
+  });
+
+  it('uses "Previous month" / "Next month" for explicit days view', () => {
+    render(<CalendarHeader {...baseProps} activeView="days" />);
+    expect(screen.getByLabelText('Previous month')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next month')).toBeInTheDocument();
+  });
+
+  it('uses "Previous year" / "Next year" for months view', () => {
+    render(<CalendarHeader {...baseProps} activeView="months" />);
+    expect(screen.getByLabelText('Previous year')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next year')).toBeInTheDocument();
+  });
+
+  it('uses "Previous year range" / "Next year range" for years view', () => {
+    render(<CalendarHeader {...baseProps} activeView="years" />);
+    expect(screen.getByLabelText('Previous year range')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next year range')).toBeInTheDocument();
+  });
+});
+
 describe('CalendarHeader Today button', () => {
   const baseProps = {
     viewDate: new Date(2026, 3, 1),

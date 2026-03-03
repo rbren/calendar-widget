@@ -6,6 +6,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   monthYearLabel,
   onPrevMonth,
   onNextMonth,
+  activeView = 'days',
   quickNavigation,
   onDrillUp,
   headingAriaLabel,
@@ -14,13 +15,27 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   isCurrentMonth = false,
   onGoToToday,
 }) => {
+  const prevLabel =
+    activeView === 'years'
+      ? 'Previous year range'
+      : activeView === 'months'
+        ? 'Previous year'
+        : 'Previous month';
+
+  const nextLabel =
+    activeView === 'years'
+      ? 'Next year range'
+      : activeView === 'months'
+        ? 'Next year'
+        : 'Next month';
+
   return (
     <div className={styles.header}>
       <div className={styles.navRow}>
         <button
           type="button"
           className={styles.navBtn}
-          aria-label="Previous month"
+          aria-label={prevLabel}
           onClick={onPrevMonth}
         >
           ‹
@@ -43,7 +58,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
         <button
           type="button"
           className={styles.navBtn}
-          aria-label="Next month"
+          aria-label={nextLabel}
           onClick={onNextMonth}
         >
           ›

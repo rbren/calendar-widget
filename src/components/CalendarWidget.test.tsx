@@ -525,10 +525,10 @@ describe('CalendarWidget quick navigation', () => {
     );
     expect(screen.getByText('2026')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByLabelText('Previous month'));
+    await userEvent.click(screen.getByLabelText('Previous year'));
     expect(screen.getByText('2025')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByLabelText('Next month'));
+    await userEvent.click(screen.getByLabelText('Next year'));
     expect(screen.getByText('2026')).toBeInTheDocument();
   });
 
@@ -544,13 +544,33 @@ describe('CalendarWidget quick navigation', () => {
     expect(screen.getByText('2027')).toBeInTheDocument();
 
     // Click next to go to 2028-2039
-    await userEvent.click(screen.getByLabelText('Next month'));
+    await userEvent.click(screen.getByLabelText('Next year range'));
     expect(screen.getByText('2028')).toBeInTheDocument();
     expect(screen.getByText('2039')).toBeInTheDocument();
 
     // Click prev to go back
-    await userEvent.click(screen.getByLabelText('Previous month'));
+    await userEvent.click(screen.getByLabelText('Previous year range'));
     expect(screen.getByText('2016')).toBeInTheDocument();
+  });
+
+  it('nav buttons have correct aria-labels for each view', async () => {
+    render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);
+
+    // Day view
+    expect(screen.getByLabelText('Previous month')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next month')).toBeInTheDocument();
+
+    // Month picker view
+    await userEvent.click(
+      screen.getByRole('button', { name: /choose month and year/i }),
+    );
+    expect(screen.getByLabelText('Previous year')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next year')).toBeInTheDocument();
+
+    // Year picker view
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
+    expect(screen.getByLabelText('Previous year range')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next year range')).toBeInTheDocument();
   });
 
   it('keyboard Enter on heading opens month picker', async () => {

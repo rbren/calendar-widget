@@ -88,6 +88,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
         monthYearLabel={headerLabel}
         onPrevMonth={handlePrev}
         onNextMonth={handleNext}
+        activeView={activeView}
         quickNavigation={canDrillUp}
         onDrillUp={canDrillUp ? drillUp : undefined}
         headingAriaLabel={headingAriaLabel}
