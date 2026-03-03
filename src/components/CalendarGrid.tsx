@@ -7,46 +7,14 @@ import {
   isDateRange,
   isDateBetween,
   getISOWeekNumber,
+  getWeekdayHeaders,
+  addDays,
+  getFirstDayOfWeek,
+  getLastDayOfWeek,
+  sameMonth,
 } from '../utils/dates';
 import type { CalendarGridProps } from '../types/calendar';
 import styles from './CalendarGrid.module.css';
-
-const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-function getWeekdayHeaders(weekStartsOn: number, locale?: string): string[] {
-  if (locale) {
-    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
-    // Jan 4 2026 is a Sunday
-    return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(2026, 0, 4 + ((weekStartsOn + i) % 7));
-      return formatter.format(d);
-    });
-  }
-  return Array.from(
-    { length: 7 },
-    (_, i) => DAY_NAMES_SHORT[(weekStartsOn + i) % 7],
-  );
-}
-
-function addDays(date: Date, days: number): Date {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-}
-
-function getFirstDayOfWeek(date: Date, weekStartsOn: number): Date {
-  const day = date.getDay();
-  const diff = (day - weekStartsOn + 7) % 7;
-  return addDays(date, -diff);
-}
-
-function getLastDayOfWeek(date: Date, weekStartsOn: number): Date {
-  return addDays(getFirstDayOfWeek(date, weekStartsOn), 6);
-}
-
-function sameMonth(date: Date, month: number, year: number): boolean {
-  return date.getMonth() === month && date.getFullYear() === year;
-}
 
 export const CalendarGrid: React.FC<CalendarGridProps> = ({
   weeks,

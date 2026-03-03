@@ -8,6 +8,11 @@ import {
   getISOWeekNumber,
   formatMonthYear,
   formatDayLabel,
+  addDays,
+  getFirstDayOfWeek,
+  getLastDayOfWeek,
+  sameMonth,
+  getWeekdayHeaders,
 } from './dates';
 
 describe('getCalendarDays', () => {
@@ -340,5 +345,180 @@ describe('formatDayLabel', () => {
     const label = formatDayLabel(date, undefined, noFlags);
     expect(label).toBeTruthy();
     expect(label).toContain('2026');
+  });
+});
+
+describe('addDays', () => {
+  it('adds positive days', () => {
+    const result = addDays(new Date(2026, 0, 15), 3);
+    expect(result.getDate()).toBe(18);
+    expect(result.getMonth()).toBe(0);
+  });
+
+  it('subtracts with negative days', () => {
+    const result = addDays(new Date(2026, 0, 15), -5);
+    expect(result.getDate()).toBe(10);
+    expect(result.getMonth()).toBe(0);
+  });
+
+  it('crosses month boundary forward', () => {
+    const result = addDays(new Date(2026, 0, 30), 5);
+    expect(result.getDate()).toBe(4);
+    expect(result.getMonth()).toBe(1); // February
+  });
+
+  it('crosses month boundary backward', () => {
+    const result = addDays(new Date(2026, 1, 3), -5);
+    expect(result.getDate()).toBe(29);
+    expect(result.getMonth()).toBe(0); // January
+  });
+
+  it('crosses year boundary forward', () => {
+    const result = addDays(new Date(2025, 11, 30), 5);
+    expect(result.getDate()).toBe(4);
+    expect(result.getMonth()).toBe(0);
+    expect(result.getFullYear()).toBe(2026);
+  });
+
+  it('crosses year boundary backward', () => {
+    const result = addDays(new Date(2026, 0, 2), -5);
+    expect(result.getDate()).toBe(28);
+    expect(result.getMonth()).toBe(11);
+    expect(result.getFullYear()).toBe(2025);
+  });
+
+  it('does not mutate the original date', () => {
+    const original = new Date(2026, 0, 15);
+    addDays(original, 10);
+    expect(original.getDate()).toBe(15);
+  });
+});
+
+describe('getFirstDayOfWeek', () => {
+  it('returns Sunday for a Wednesday when weekStartsOn=0', () => {
+    // April 15, 2026 is a Wednesday
+    const result = getFirstDayOfWeek(new Date(2026, 3, 15), 0);
+    expect(result.getDay()).toBe(0); // Sunday
+    expect(result.getDate()).toBe(12);
+  });
+
+  it('returns Monday for a Wednesday when weekStartsOn=1', () => {
+    const result = getFirstDayOfWeek(new Date(2026, 3, 15), 1);
+    expect(result.getDay()).toBe(1); // Monday
+    expect(result.getDate()).toBe(13);
+  });
+
+  it('returns the date itself when it is the first day of the week', () => {
+    // April 12, 2026 is a Sunday
+    const result = getFirstDayOfWeek(new Date(2026, 3, 12), 0);
+    expect(result.getDate()).toBe(12);
+  });
+
+  it('handles weekStartsOn=6 (Saturday)', () => {
+    // April 15, 2026 is a Wednesday → previous Saturday is April 11
+    const result = getFirstDayOfWeek(new Date(2026, 3, 15), 6);
+    expect(result.getDay()).toBe(6); // Saturday
+    expect(result.getDate()).toBe(11);
+  });
+
+  it('crosses month boundary', () => {
+    // March 1, 2026 is a Sunday, weekStartsOn=1 → Monday Feb 23
+    const result = getFirstDayOfWeek(new Date(2026, 2, 1), 1);
+    expect(result.getDay()).toBe(1); // Monday
+    expect(result.getMonth()).toBe(1); // February
+    expect(result.getDate()).toBe(23);
+  });
+});
+
+describe('getLastDayOfWeek', () => {
+  it('returns Saturday for a Wednesday when weekStartsOn=0', () => {
+    // April 15, 2026 is a Wednesday
+    const result = getLastDayOfWeek(new Date(2026, 3, 15), 0);
+    expect(result.getDay()).toBe(6); // Saturday
+    expect(result.getDate()).toBe(18);
+  });
+
+  it('returns Sunday for a Wednesday when weekStartsOn=1', () => {
+    const result = getLastDayOfWeek(new Date(2026, 3, 15), 1);
+    expect(result.getDay()).toBe(0); // Sunday
+    expect(result.getDate()).toBe(19);
+  });
+
+  it('returns the date itself when it is the last day of the week', () => {
+    // April 18, 2026 is a Saturday, weekStartsOn=0
+    const result = getLastDayOfWeek(new Date(2026, 3, 18), 0);
+    expect(result.getDate()).toBe(18);
+  });
+
+  it('crosses month boundary', () => {
+    // Jan 30, 2026 is a Friday, weekStartsOn=0 → Saturday Jan 31... no, let's check
+    // Actually Jan 31, 2026 is a Saturday. weekStartsOn=0 → last day is Sat Jan 31
+    const result = getLastDayOfWeek(new Date(2026, 0, 26), 0);
+    // Jan 26 is Monday, weekStartsOn=0 → first day is Sun Jan 25, last day is Sat Jan 31
+    expect(result.getDate()).toBe(31);
+    expect(result.getMonth()).toBe(0);
+  });
+});
+
+describe('sameMonth', () => {
+  it('returns true when date is in the given month and year', () => {
+    expect(sameMonth(new Date(2026, 3, 15), 3, 2026)).toBe(true);
+  });
+
+  it('returns false when month differs', () => {
+    expect(sameMonth(new Date(2026, 3, 15), 4, 2026)).toBe(false);
+  });
+
+  it('returns false when year differs', () => {
+    expect(sameMonth(new Date(2026, 3, 15), 3, 2025)).toBe(false);
+  });
+
+  it('handles December/January boundary', () => {
+    expect(sameMonth(new Date(2025, 11, 31), 11, 2025)).toBe(true);
+    expect(sameMonth(new Date(2026, 0, 1), 11, 2025)).toBe(false);
+  });
+});
+
+describe('getWeekdayHeaders', () => {
+  it('returns 7 headers starting from Sunday when weekStartsOn=0', () => {
+    const headers = getWeekdayHeaders(0);
+    expect(headers).toHaveLength(7);
+    expect(headers[0]).toBe('Sun');
+    expect(headers[6]).toBe('Sat');
+  });
+
+  it('returns 7 headers starting from Monday when weekStartsOn=1', () => {
+    const headers = getWeekdayHeaders(1);
+    expect(headers).toHaveLength(7);
+    expect(headers[0]).toBe('Mon');
+    expect(headers[6]).toBe('Sun');
+  });
+
+  it('returns 7 headers starting from Saturday when weekStartsOn=6', () => {
+    const headers = getWeekdayHeaders(6);
+    expect(headers[0]).toBe('Sat');
+    expect(headers[1]).toBe('Sun');
+    expect(headers[6]).toBe('Fri');
+  });
+
+  it('returns localized headers with explicit locale', () => {
+    const headers = getWeekdayHeaders(0, 'en-US');
+    expect(headers).toHaveLength(7);
+    expect(headers[0]).toBe('Sun');
+  });
+
+  it('returns localized headers in German', () => {
+    const headers = getWeekdayHeaders(1, 'de-DE');
+    expect(headers).toHaveLength(7);
+    // Monday in German
+    expect(headers[0]).toMatch(/^Mo/);
+  });
+
+  it('all weekStartsOn values produce 7 unique headers', () => {
+    for (let start = 0; start < 7; start++) {
+      const headers = getWeekdayHeaders(start);
+      expect(headers).toHaveLength(7);
+      expect(new Set(headers).size).toBe(7);
+    }
   });
 });

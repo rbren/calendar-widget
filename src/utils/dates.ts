@@ -100,6 +100,51 @@ export function getISOWeekNumber(date: Date): number {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
+const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/** Returns localized short weekday names starting from the given weekStartsOn day. */
+export function getWeekdayHeaders(
+  weekStartsOn: number,
+  locale?: string,
+): string[] {
+  if (locale) {
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+    // Jan 4 2026 is a Sunday
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(2026, 0, 4 + ((weekStartsOn + i) % 7));
+      return formatter.format(d);
+    });
+  }
+  return Array.from(
+    { length: 7 },
+    (_, i) => DAY_NAMES_SHORT[(weekStartsOn + i) % 7],
+  );
+}
+
+/** Adds N days to a Date, returning a new Date. */
+export function addDays(date: Date, days: number): Date {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+/** Returns the first day of the week containing the given date. */
+export function getFirstDayOfWeek(date: Date, weekStartsOn: number): Date {
+  const day = date.getDay();
+  const diff = (day - weekStartsOn + 7) % 7;
+  return addDays(date, -diff);
+}
+
+/** Returns the last day of the week containing the given date. */
+export function getLastDayOfWeek(date: Date, weekStartsOn: number): Date {
+  return addDays(getFirstDayOfWeek(date, weekStartsOn), 6);
+}
+
+/** Returns true if the date is in the given month and year. */
+export function sameMonth(date: Date, month: number, year: number): boolean {
+  return date.getMonth() === month && date.getFullYear() === year;
+}
+
 /** Builds a full accessible label for a day cell (e.g. "Saturday, March 15, 2026 (today, selected)"). */
 export function formatDayLabel(
   date: Date,
