@@ -10,6 +10,8 @@
   --cw-color-selected-text: #ffffff;
   --cw-color-today-ring: var(--cw-color-primary);
   --cw-color-disabled: #e5e7eb;
+  --cw-color-range-bg: #dbeafe;
+  --cw-color-range-preview-bg: rgba(219, 234, 254, 0.5);
   --cw-border-radius: 6px;
   --cw-cell-size: 36px;
 

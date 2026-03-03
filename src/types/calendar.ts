@@ -1,8 +1,15 @@
+export interface DateRange {
+  start: Date;
+  end: Date;
+}
+
 export interface CalendarWidgetProps {
+  /** Selection mode: pick one date, or a start–end range (default: 'single') */
+  mode?: 'single' | 'range';
   /** Currently selected date(s) */
-  value?: Date | Date[] | null;
-  /** Called when the user selects a date */
-  onChange?: (date: Date) => void;
+  value?: Date | DateRange | Date[] | null;
+  /** Called when the user selects a date or range */
+  onChange?: (value: Date | DateRange | null) => void;
   /** Locale string for Intl formatting (default: browser default) */
   locale?: string;
   /** Earliest selectable date */
@@ -34,7 +41,9 @@ export interface CalendarGridProps {
   /** The date representing the currently displayed month */
   viewDate: Date;
   /** Currently selected date(s) */
-  value?: Date | Date[] | null;
+  value?: Date | DateRange | Date[] | null;
+  /** Selection mode */
+  mode?: 'single' | 'range';
   /** Earliest selectable date */
   minDate?: Date;
   /** Latest selectable date */
@@ -47,10 +56,16 @@ export interface CalendarGridProps {
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   /** The date that currently holds the roving tabIndex */
   focusedDate: Date;
+  /** The pending start date during range selection (before second click) */
+  rangeStart?: Date | null;
+  /** The hovered date during range selection preview */
+  hoveredDate?: Date | null;
   /** Called when a day is clicked */
   onSelectDate: (date: Date) => void;
   /** Called when keyboard navigation changes the focused date */
   onFocusDate: (date: Date) => void;
+  /** Called when a day is hovered (for range preview) */
+  onHoverDate?: (date: Date | null) => void;
 }
 
 export interface CalendarDayCellProps {
@@ -66,8 +81,22 @@ export interface CalendarDayCellProps {
   isDisabled: boolean;
   /** Whether this cell has the roving tabIndex focus */
   isFocusTarget: boolean;
+  /** Whether this date is the start of a selected range */
+  isRangeStart?: boolean;
+  /** Whether this date is the end of a selected range */
+  isRangeEnd?: boolean;
+  /** Whether this date falls within a selected range (not start/end) */
+  isInRange?: boolean;
+  /** Whether this date falls within the preview range (hover) */
+  isInPreview?: boolean;
+  /** Whether this date is the start of the preview range */
+  isPreviewStart?: boolean;
+  /** Whether this date is the end of the preview range */
+  isPreviewEnd?: boolean;
   /** Called when this day is clicked */
   onSelect: (date: Date) => void;
+  /** Called when this day is hovered */
+  onHover?: (date: Date | null) => void;
   /** Locale for formatting the accessible date label */
   locale?: string;
   /** Optional marker/event label to include in the accessible name */

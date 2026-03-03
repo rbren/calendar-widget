@@ -37,3 +37,51 @@
   cursor: default;
   pointer-events: none;
 }
+
+/* Range selection: completed range */
+.rangeStart {
+  background: var(--cw-color-selected);
+  color: var(--cw-color-selected-text);
+  border-radius: var(--cw-border-radius) 0 0 var(--cw-border-radius);
+}
+
+.rangeEnd {
+  background: var(--cw-color-selected);
+  color: var(--cw-color-selected-text);
+  border-radius: 0 var(--cw-border-radius) var(--cw-border-radius) 0;
+}
+
+.rangeStart.rangeEnd {
+  border-radius: var(--cw-border-radius);
+}
+
+.inRange {
+  background: var(--cw-color-range-bg);
+  border-radius: 0;
+}
+
+/* Range selection: hover preview */
+.previewStart {
+  border-radius: var(--cw-border-radius) 0 0 var(--cw-border-radius);
+}
+
+.previewEnd {
+  border-radius: 0 var(--cw-border-radius) var(--cw-border-radius) 0;
+}
+
+.previewStart.previewEnd {
+  border-radius: var(--cw-border-radius);
+}
+
+.inPreview {
+  background: var(--cw-color-range-preview-bg);
+  border-radius: 0;
+}
+
+.previewStart:not(.selected):not(.rangeStart):not(.rangeEnd) {
+  background: var(--cw-color-range-preview-bg);
+}
+
+.previewEnd:not(.selected):not(.rangeStart):not(.rangeEnd) {
+  background: var(--cw-color-range-preview-bg);
+}

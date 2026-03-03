@@ -9,6 +9,7 @@ export { useCalendarState } from './hooks/useCalendarState';
 
 // Types
 export type {
+  DateRange,
   CalendarWidgetProps,
   CalendarHeaderProps,
   CalendarGridProps,
@@ -21,6 +22,8 @@ export {
   isSameDay,
   isDateInRange,
   isDateDisabled,
+  isDateRange,
+  isDateBetween,
   formatMonthYear,
   formatDayLabel,
 } from './utils/dates';

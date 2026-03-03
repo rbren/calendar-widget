@@ -64,11 +64,42 @@ export function formatMonthYear(date: Date, locale?: string): string {
   }).format(date);
 }
 
+/** Type guard for DateRange objects. */
+export function isDateRange(
+  value: unknown,
+): value is { start: Date; end: Date } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'start' in value &&
+    'end' in value &&
+    (value as { start: unknown }).start instanceof Date &&
+    (value as { end: unknown }).end instanceof Date
+  );
+}
+
+/** Returns true if the date falls strictly between start and end (exclusive). */
+export function isDateBetween(date: Date, start: Date, end: Date): boolean {
+  const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+  const lo = s <= e ? s : e;
+  const hi = s <= e ? e : s;
+  return d > lo && d < hi;
+}
+
 /** Builds a full accessible label for a day cell (e.g. "Saturday, March 15, 2026 (today, selected)"). */
 export function formatDayLabel(
   date: Date,
   locale: string | undefined,
-  flags: { isToday: boolean; isSelected: boolean; isDisabled: boolean },
+  flags: {
+    isToday: boolean;
+    isSelected: boolean;
+    isDisabled: boolean;
+    isRangeStart?: boolean;
+    isRangeEnd?: boolean;
+    isInRange?: boolean;
+  },
   markerLabel?: string,
 ): string {
   const formatted = new Intl.DateTimeFormat(locale, {
@@ -80,7 +111,10 @@ export function formatDayLabel(
 
   const statuses: string[] = [];
   if (flags.isToday) statuses.push('today');
-  if (flags.isSelected) statuses.push('selected');
+  if (flags.isRangeStart) statuses.push('selected, start of range');
+  else if (flags.isRangeEnd) statuses.push('selected, end of range');
+  else if (flags.isInRange) statuses.push('in selected range');
+  else if (flags.isSelected) statuses.push('selected');
   if (flags.isDisabled) statuses.push('unavailable');
 
   let label = formatted;

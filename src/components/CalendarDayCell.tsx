@@ -10,7 +10,14 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   isSelected,
   isDisabled,
   isFocusTarget,
+  isRangeStart,
+  isRangeEnd,
+  isInRange,
+  isInPreview,
+  isPreviewStart,
+  isPreviewEnd,
   onSelect,
+  onHover,
   locale,
   markerLabel,
 }) => {
@@ -29,12 +36,22 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
     }
   };
 
+  const handleMouseEnter = () => {
+    onHover?.(date);
+  };
+
   const classNames = [
     styles.cell,
     !isCurrentMonth && styles.outside,
     isToday && styles.today,
     isSelected && styles.selected,
     isDisabled && styles.disabled,
+    isRangeStart && styles.rangeStart,
+    isRangeEnd && styles.rangeEnd,
+    isInRange && styles.inRange,
+    isInPreview && styles.inPreview,
+    isPreviewStart && styles.previewStart,
+    isPreviewEnd && styles.previewEnd,
   ]
     .filter(Boolean)
     .join(' ');
@@ -42,7 +59,7 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   const ariaLabel = formatDayLabel(
     date,
     locale,
-    { isToday, isSelected, isDisabled },
+    { isToday, isSelected, isDisabled, isRangeStart, isRangeEnd, isInRange },
     markerLabel,
   );
 
@@ -51,12 +68,13 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
       role="gridcell"
       className={classNames}
       tabIndex={isFocusTarget ? 0 : -1}
-      aria-selected={isSelected}
+      aria-selected={isSelected || isRangeStart || isRangeEnd || false}
       aria-disabled={isDisabled}
       aria-current={isToday ? 'date' : undefined}
       aria-label={ariaLabel}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
+      onMouseEnter={handleMouseEnter}
     >
       <span>{date.getDate()}</span>
     </td>

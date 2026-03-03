@@ -1,6 +1,12 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { CalendarDayCell } from './CalendarDayCell';
-import { isSameDay, isDateInRange, isDateDisabled } from '../utils/dates';
+import {
+  isSameDay,
+  isDateInRange,
+  isDateDisabled,
+  isDateRange,
+  isDateBetween,
+} from '../utils/dates';
 import type { CalendarGridProps } from '../types/calendar';
 import styles from './CalendarGrid.module.css';
 
@@ -45,24 +51,69 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   weeks,
   viewDate,
   value,
+  mode = 'single',
   minDate,
   maxDate,
   disabledDates = [],
   locale,
   weekStartsOn,
   focusedDate,
+  rangeStart,
+  hoveredDate,
   onSelectDate,
   onFocusDate,
+  onHoverDate,
 }) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const today = new Date();
   const headers = getWeekdayHeaders(weekStartsOn, locale);
 
   const isSelected = (date: Date): boolean => {
+    if (mode === 'range' && rangeStart && !isDateRange(value)) {
+      return isSameDay(date, rangeStart);
+    }
     if (!value) return false;
     if (value instanceof Date) return isSameDay(date, value);
+    if (isDateRange(value)) {
+      return isSameDay(date, value.start) || isSameDay(date, value.end);
+    }
     if (Array.isArray(value)) return value.some((v) => isSameDay(date, v));
     return false;
+  };
+
+  const getRangeFlags = (date: Date) => {
+    let isRangeStart = false;
+    let isRangeEnd = false;
+    let isInRange = false;
+    let isInPreview = false;
+    let isPreviewStart = false;
+    let isPreviewEnd = false;
+
+    if (mode !== 'range') {
+      return { isRangeStart, isRangeEnd, isInRange, isInPreview, isPreviewStart, isPreviewEnd };
+    }
+
+    // Completed range from value
+    if (isDateRange(value)) {
+      isRangeStart = isSameDay(date, value.start);
+      isRangeEnd = isSameDay(date, value.end);
+      if (!isRangeStart && !isRangeEnd) {
+        isInRange = isDateBetween(date, value.start, value.end);
+      }
+    }
+
+    // Preview range (first click done, hovering)
+    if (rangeStart && hoveredDate && !isSameDay(rangeStart, hoveredDate)) {
+      const lo = rangeStart <= hoveredDate ? rangeStart : hoveredDate;
+      const hi = rangeStart <= hoveredDate ? hoveredDate : rangeStart;
+      isPreviewStart = isSameDay(date, lo);
+      isPreviewEnd = isSameDay(date, hi);
+      if (!isPreviewStart && !isPreviewEnd) {
+        isInPreview = isDateBetween(date, lo, hi);
+      }
+    }
+
+    return { isRangeStart, isRangeEnd, isInRange, isInPreview, isPreviewStart, isPreviewEnd };
   };
 
   // Move DOM focus to the focused date cell after render
@@ -120,6 +171,10 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
     [focusedDate, weekStartsOn, onFocusDate],
   );
 
+  const handleMouseLeave = useCallback(() => {
+    onHoverDate?.(null);
+  }, [onHoverDate]);
+
   return (
     <table
       className={styles.grid}
@@ -127,6 +182,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
       aria-label="Calendar"
       ref={tableRef}
       onKeyDown={handleKeyDown}
+      onMouseLeave={handleMouseLeave}
     >
       <thead>
         <tr role="row">
@@ -145,26 +201,36 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
       <tbody>
         {weeks.map((week, rowIdx) => (
           <tr key={rowIdx} role="row">
-            {week.map((date, colIdx) => (
-              <CalendarDayCell
-                key={colIdx}
-                date={date}
-                isCurrentMonth={sameMonth(
-                  date,
-                  viewDate.getMonth(),
-                  viewDate.getFullYear(),
-                )}
-                isToday={isSameDay(date, today)}
-                isSelected={isSelected(date)}
-                isDisabled={
-                  !isDateInRange(date, minDate, maxDate) ||
-                  isDateDisabled(date, disabledDates)
-                }
-                isFocusTarget={isSameDay(date, focusedDate)}
-                onSelect={onSelectDate}
-                locale={locale}
-              />
-            ))}
+            {week.map((date, colIdx) => {
+              const rangeFlags = getRangeFlags(date);
+              return (
+                <CalendarDayCell
+                  key={colIdx}
+                  date={date}
+                  isCurrentMonth={sameMonth(
+                    date,
+                    viewDate.getMonth(),
+                    viewDate.getFullYear(),
+                  )}
+                  isToday={isSameDay(date, today)}
+                  isSelected={isSelected(date)}
+                  isDisabled={
+                    !isDateInRange(date, minDate, maxDate) ||
+                    isDateDisabled(date, disabledDates)
+                  }
+                  isFocusTarget={isSameDay(date, focusedDate)}
+                  isRangeStart={rangeFlags.isRangeStart}
+                  isRangeEnd={rangeFlags.isRangeEnd}
+                  isInRange={rangeFlags.isInRange}
+                  isInPreview={rangeFlags.isInPreview}
+                  isPreviewStart={rangeFlags.isPreviewStart}
+                  isPreviewEnd={rangeFlags.isPreviewEnd}
+                  onSelect={onSelectDate}
+                  onHover={onHoverDate}
+                  locale={locale}
+                />
+              );
+            })}
           </tr>
         ))}
       </tbody>

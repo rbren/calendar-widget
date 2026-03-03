@@ -4,12 +4,14 @@ import {
   isSameDay,
   isDateInRange,
   isDateDisabled,
+  isDateRange,
   formatMonthYear,
 } from '../utils/dates';
 import type { CalendarWidgetProps } from '../types/calendar';
 
 export function useCalendarState(props: CalendarWidgetProps) {
   const {
+    mode = 'single',
     value,
     onChange,
     locale,
@@ -19,39 +21,63 @@ export function useCalendarState(props: CalendarWidgetProps) {
     weekStartsOn = 0,
   } = props;
 
-  const initialDate = value instanceof Date ? value : new Date();
+  const getInitialDate = (): Date => {
+    if (value instanceof Date) return value;
+    if (isDateRange(value)) return value.start;
+    return new Date();
+  };
+
+  const initialDate = getInitialDate();
   const [viewDate, setViewDate] = useState(
     new Date(initialDate.getFullYear(), initialDate.getMonth(), 1),
   );
 
   const [focusedDate, setFocusedDate] = useState(initialDate);
 
+  // Range selection: pending start date (after first click, before second)
+  const [rangeStart, setRangeStart] = useState<Date | null>(null);
+  // Hovered date for range preview
+  const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
+
   // Sync viewDate and focusedDate when the value prop changes externally.
-  // Uses the "adjust state during render" pattern recommended by React docs
-  // to avoid cascading renders from setState-in-useEffect.
   const [prevValue, setPrevValue] = useState(value);
+  const valueDate = value instanceof Date ? value : null;
+  const prevValueDate = prevValue instanceof Date ? prevValue : null;
+  const valueRange = isDateRange(value) ? value : null;
+  const prevValueRange = isDateRange(prevValue) ? prevValue : null;
+
+  const singleChanged =
+    valueDate !== null &&
+    prevValueDate !== null &&
+    !isSameDay(valueDate, prevValueDate);
+  const rangeChanged =
+    valueRange !== null &&
+    prevValueRange !== null &&
+    (!isSameDay(valueRange.start, prevValueRange.start) ||
+      !isSameDay(valueRange.end, prevValueRange.end));
+  const typeChanged =
+    (valueDate !== null) !== (prevValueDate !== null) ||
+    (valueRange !== null) !== (prevValueRange !== null);
+  const nullChanged =
+    (value == null) !== (prevValue == null);
+
   const valueChanged =
-    value !== prevValue &&
-    !(
-      value instanceof Date &&
-      prevValue instanceof Date &&
-      isSameDay(value, prevValue)
-    ) &&
-    !(value == null && prevValue == null);
+    value !== prevValue && (singleChanged || rangeChanged || typeChanged || nullChanged);
 
   if (valueChanged) {
     setPrevValue(value);
-    if (value instanceof Date) {
-      const newMonth = value.getMonth();
-      const newYear = value.getFullYear();
+    const syncDate = value instanceof Date ? value : isDateRange(value) ? value.start : null;
+    if (syncDate) {
+      const newMonth = syncDate.getMonth();
+      const newYear = syncDate.getFullYear();
       if (
         viewDate.getMonth() !== newMonth ||
         viewDate.getFullYear() !== newYear
       ) {
         setViewDate(new Date(newYear, newMonth, 1));
       }
-      if (!isSameDay(focusedDate, value)) {
-        setFocusedDate(value);
+      if (!isSameDay(focusedDate, syncDate)) {
+        setFocusedDate(syncDate);
       }
     }
   }
@@ -66,7 +92,6 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   const focusDate = useCallback((date: Date) => {
     setFocusedDate(date);
-    // If the focused date moves out of the currently viewed month, navigate
     const newMonth = date.getMonth();
     const newYear = date.getFullYear();
     setViewDate((prev) => {
@@ -96,15 +121,43 @@ export function useCalendarState(props: CalendarWidgetProps) {
     (date: Date) => {
       if (!isDateInRange(date, minDate, maxDate)) return;
       if (isDateDisabled(date, disabledDates)) return;
-      onChange?.(date);
+
+      if (mode === 'range') {
+        if (rangeStart === null) {
+          // First click: set range start
+          setRangeStart(date);
+          setHoveredDate(null);
+        } else {
+          // Second click: complete range
+          const start = rangeStart <= date ? rangeStart : date;
+          const end = rangeStart <= date ? date : rangeStart;
+          setRangeStart(null);
+          setHoveredDate(null);
+          onChange?.({ start, end });
+        }
+      } else {
+        onChange?.(date);
+      }
     },
-    [onChange, minDate, maxDate, disabledDates],
+    [mode, onChange, minDate, maxDate, disabledDates, rangeStart],
+  );
+
+  const hoverDate = useCallback(
+    (date: Date | null) => {
+      if (mode === 'range' && rangeStart !== null) {
+        setHoveredDate(date);
+      }
+    },
+    [mode, rangeStart],
   );
 
   const isSelected = useCallback(
     (date: Date): boolean => {
       if (!value) return false;
       if (value instanceof Date) return isSameDay(date, value);
+      if (isDateRange(value)) {
+        return isSameDay(date, value.start) || isSameDay(date, value.end);
+      }
       if (Array.isArray(value)) return value.some((v) => isSameDay(date, v));
       return false;
     },
@@ -120,6 +173,9 @@ export function useCalendarState(props: CalendarWidgetProps) {
     goToNextMonth,
     selectDate,
     focusDate,
+    hoverDate,
     isSelected,
+    rangeStart,
+    hoveredDate,
   };
 }

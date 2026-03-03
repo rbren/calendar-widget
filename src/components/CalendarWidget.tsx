@@ -7,6 +7,7 @@ import styles from './CalendarWidget.module.css';
 
 export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
   const {
+    mode = 'single',
     locale,
     minDate,
     maxDate,
@@ -25,6 +26,9 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     goToNextMonth,
     selectDate,
     focusDate,
+    hoverDate,
+    rangeStart,
+    hoveredDate,
   } = useCalendarState(props);
 
   const rootClassName = [styles.root, className].filter(Boolean).join(' ');
@@ -41,14 +45,18 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
         weeks={weeks}
         viewDate={viewDate}
         value={value}
+        mode={mode}
         minDate={minDate}
         maxDate={maxDate}
         disabledDates={disabledDates}
         locale={locale}
         weekStartsOn={weekStartsOn}
         focusedDate={focusedDate}
+        rangeStart={rangeStart}
+        hoveredDate={hoveredDate}
         onSelectDate={selectDate}
         onFocusDate={focusDate}
+        onHoverDate={hoverDate}
       />
     </div>
   );
