@@ -1,0 +1,34 @@
+{
+  "name": "@calendar-widget/core",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/calendar-widget.cjs",
+  "module": "dist/calendar-widget.mjs",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/calendar-widget.mjs",
+      "require": "./dist/calendar-widget.cjs",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "scripts": {},
+  "keywords": [],
+  "description": "A React calendar widget component",
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  }
+}
