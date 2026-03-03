@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0025 — React Peer Dependency Range Too Narrow
