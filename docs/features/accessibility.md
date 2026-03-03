@@ -9,11 +9,24 @@ The calendar widget follows [WAI-ARIA grid pattern](https://www.w3.org/WAI/ARIA/
 | Date grid `<table>` | `role="grid"`, `aria-label="Calendar"` | Identifies the grid to assistive technology |
 | Weekday headers `<th>` | `role="columnheader"` | Labels each column |
 | Day cells `<td>` | `role="gridcell"` | Identifies each interactive cell |
-| Day cells | `aria-selected` | Reflects selection state |
+| Day cells | `aria-selected` | Reflects selection state (including range start/end) |
 | Day cells | `aria-disabled` | Reflects disabled state |
+| Day cells | `aria-label` | Full descriptive label, e.g. `"Saturday, March 15, 2026 (today, selected)"` |
 | Today's cell | `aria-current="date"` | Identifies today |
 | Month/year label | `aria-live="polite"` | Announces month changes to screen readers |
 | Navigation buttons | `aria-label` | `"Previous month"` / `"Next month"` |
+
+### Day cell labels
+
+Every day cell has a descriptive `aria-label` built from the full date and its current state. Examples:
+
+- `"Sunday, March 15, 2026"` — plain day
+- `"Sunday, March 15, 2026 (today)"` — today's date
+- `"Sunday, March 15, 2026 (today, selected)"` — today and selected
+- `"Monday, March 10, 2026 (selected, start of range)"` — range start
+- `"Friday, March 20, 2026 (selected, end of range)"` — range end
+- `"Wednesday, March 12, 2026 (in selected range)"` — within a range
+- `"Thursday, March 25, 2026 (unavailable)"` — disabled date
 
 ## Keyboard navigation
 

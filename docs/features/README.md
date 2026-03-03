@@ -1,6 +1,7 @@
 # Feature Guides
 
 - **[Date Selection](./date-selection.md)** — Single and multi-date selection
+- **[Range Selection](./range-selection.md)** — Start–end date range picking with hover preview
 - **[Navigation](./navigation.md)** — Month-to-month browsing
 - **[Disabled Dates & Ranges](./disabled-dates.md)** — Constraining selectable dates
 - **[Accessibility](./accessibility.md)** — Keyboard navigation and screen reader support

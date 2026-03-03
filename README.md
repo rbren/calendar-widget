@@ -4,13 +4,14 @@
 [![npm version](https://img.shields.io/npm/v/@calendar-widget/core)](https://www.npmjs.com/package/@calendar-widget/core)
 [![license](https://img.shields.io/npm/l/@calendar-widget/core)](./LICENSE)
 
-A lightweight, accessible React calendar widget with full keyboard navigation, localization support, and flexible theming via CSS custom properties.
+A lightweight, accessible React calendar widget with single date and date range selection, full keyboard navigation, localization support, and flexible theming via CSS custom properties.
 
 ## Features
 
-- **Date selection** — Single date selection with optional min/max constraints and disabled dates
-- **Accessible** — Full keyboard navigation (WAI-ARIA Date Picker pattern) and ARIA attributes
-- **Localizable** — Uses `Intl.DateTimeFormat` for locale-aware month and day formatting
+- **Date selection** — Single date or date range selection with optional min/max constraints and disabled dates
+- **Range mode** — Two-click range picking with live hover preview
+- **Accessible** — Full keyboard navigation (WAI-ARIA grid pattern), descriptive `aria-label` on every cell, and ARIA attributes throughout
+- **Localizable** — Uses `Intl.DateTimeFormat` for locale-aware month, day, and accessible label formatting
 - **Configurable** — Set the first day of the week to any day (Sunday–Saturday)
 - **Themeable** — Customize colors, sizing, and fonts with CSS custom properties
 - **Lightweight** — Zero runtime dependencies (React is a peer dependency)
@@ -42,12 +43,33 @@ function App() {
 }
 ```
 
+### Range Selection
+
+```tsx
+import { useState } from 'react';
+import { CalendarWidget, DateRange } from '@calendar-widget/core';
+import '@calendar-widget/core/style.css';
+
+function App() {
+  const [range, setRange] = useState<DateRange | null>(null);
+
+  return (
+    <CalendarWidget
+      mode="range"
+      value={range}
+      onChange={setRange}
+    />
+  );
+}
+```
+
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `Date \| Date[] \| null` | — | Currently selected date(s) |
-| `onChange` | `(date: Date) => void` | — | Called when a date is selected |
+| `mode` | `'single' \| 'range'` | `'single'` | Selection mode |
+| `value` | `Date \| DateRange \| Date[] \| null` | — | Currently selected date(s) or range |
+| `onChange` | `(value: Date \| DateRange \| null) => void` | — | Called when the user selects a date or completes a range |
 | `locale` | `string` | Browser default | Locale for `Intl` formatting (e.g. `"fr-FR"`) |
 | `minDate` | `Date` | — | Earliest selectable date |
 | `maxDate` | `Date` | — | Latest selectable date |
@@ -87,6 +109,8 @@ Override CSS custom properties on the widget root to change the look:
 | `--cw-color-selected-text` | `#ffffff` | Selected day text color |
 | `--cw-color-today-ring` | `var(--cw-color-primary)` | Ring color for today's date |
 | `--cw-color-disabled` | `#e5e7eb` | Disabled day text color |
+| `--cw-color-range-bg` | `#dbeafe` | Background for days within a selected range |
+| `--cw-color-range-preview-bg` | `rgba(219, 234, 254, 0.5)` | Background for the hover preview range |
 | `--cw-border-radius` | `6px` | Day cell border radius |
 | `--cw-cell-size` | `36px` | Day cell width and height |
 
@@ -104,7 +128,7 @@ See [docs/features/styling.md](docs/features/styling.md) for more details.
 
 ## Accessibility
 
-This widget targets WCAG 2.1 Level AA compliance. The calendar grid uses the WAI-ARIA date picker pattern with `role="grid"`, proper `aria-label` attributes, and a roving tabindex for keyboard navigation. See the [Keyboard Navigation](#keyboard-navigation) table above for supported shortcuts.
+This widget targets WCAG 2.1 Level AA compliance. The calendar grid uses the WAI-ARIA grid pattern with `role="grid"`, descriptive `aria-label` attributes on every day cell (e.g. "Saturday, March 15, 2026 (today, selected)"), and a roving tabindex for keyboard navigation. See the [Keyboard Navigation](#keyboard-navigation) table above for supported shortcuts.
 
 ## Development
 
@@ -115,6 +139,9 @@ cd calendar-widget
 
 # Install dependencies
 npm install
+
+# Start the dev server
+npm run dev
 
 # Run tests
 npm test

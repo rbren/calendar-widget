@@ -3,6 +3,7 @@
 ## Components
 
 - **[CalendarWidget](./CalendarWidget.md)** — Main calendar component (start here)
+- **[CalendarGrid](./CalendarGrid.md)** — Date grid with weekday headers and day cells
 - **[CalendarHeader](./CalendarHeader.md)** — Month/year navigation bar
 - **[CalendarDayCell](./CalendarDayCell.md)** — Individual day cell
 
@@ -10,6 +11,10 @@
 
 - **[useCalendarState](./useCalendarState.md)** — Calendar state management hook
 
+## Types
+
+- **[DateRange](./CalendarWidget.md#daterange)** — `{ start: Date; end: Date }`
+
 ## Utilities
 
-- **[Utility Functions](./utilities.md)** — `getCalendarDays`, `isSameDay`, `isDateInRange`, `isDateDisabled`, `formatMonthYear`
+- **[Utility Functions](./utilities.md)** — `getCalendarDays`, `isSameDay`, `isDateInRange`, `isDateDisabled`, `isDateRange`, `isDateBetween`, `formatMonthYear`, `formatDayLabel`

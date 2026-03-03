@@ -1,5 +1,7 @@
 # Date Selection
 
+The calendar widget defaults to single date selection (`mode="single"`). For start–end date range selection, see [Range Selection](./range-selection.md).
+
 ## Single date selection
 
 Pass a `Date` as the `value` prop and handle changes with `onChange`:

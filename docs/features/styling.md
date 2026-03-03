@@ -25,6 +25,8 @@ All visual aspects are controlled through CSS custom properties defined on the w
 | `--cw-color-selected-text` | `#ffffff` | Selected day text color |
 | `--cw-color-today-ring` | `var(--cw-color-primary)` | Inset ring on today's cell |
 | `--cw-color-disabled` | `#e5e7eb` | Disabled day text color |
+| `--cw-color-range-bg` | `#dbeafe` | Background for days within a selected range |
+| `--cw-color-range-preview-bg` | `rgba(219, 234, 254, 0.5)` | Background for the hover preview range |
 | `--cw-border-radius` | `6px` | Border radius for cells and buttons |
 | `--cw-cell-size` | `36px` | Width and height of each day cell |
 

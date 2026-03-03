@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarWidget } from '@calendar-widget/core';
+import type { DateRange } from '@calendar-widget/core';
 import '@calendar-widget/core/style.css';
 
 const today = new Date();
@@ -121,6 +122,53 @@ function LocaleDemo() {
   );
 }
 
+function RangeDemo() {
+  const [range, setRange] = useState<DateRange | null>(null);
+
+  return (
+    <div className="demo-card">
+      <h2>Range Selection</h2>
+      <p className="description">
+        Click a start date, then click an end date to select a range. Hover to
+        preview.
+      </p>
+      <CalendarWidget mode="range" value={range} onChange={setRange} />
+      <p className="selection">
+        {range
+          ? `${range.start.toLocaleDateString()} – ${range.end.toLocaleDateString()}`
+          : 'No range selected'}
+      </p>
+    </div>
+  );
+}
+
+function RangeConstrainedDemo() {
+  const [range, setRange] = useState<DateRange | null>(null);
+  const minDate = new Date(year, month, 1);
+  const maxDate = new Date(year, month + 2, 0);
+
+  return (
+    <div className="demo-card">
+      <h2>Constrained Range</h2>
+      <p className="description">
+        Range selection with min/max bounds (this month through next month).
+      </p>
+      <CalendarWidget
+        mode="range"
+        value={range}
+        onChange={setRange}
+        minDate={minDate}
+        maxDate={maxDate}
+      />
+      <p className="selection">
+        {range
+          ? `${range.start.toLocaleDateString()} – ${range.end.toLocaleDateString()}`
+          : 'No range selected'}
+      </p>
+    </div>
+  );
+}
+
 function MultiSelectDemo() {
   const [dates, setDates] = useState<Date[]>([]);
 
@@ -218,7 +266,9 @@ export default function App() {
       <p>Interactive examples of every CalendarWidget feature.</p>
       <div className="demos">
         <BasicDemo />
+        <RangeDemo />
         <MinMaxDemo />
+        <RangeConstrainedDemo />
         <DisabledDatesDemo />
         <LocaleDemo />
         <MultiSelectDemo />

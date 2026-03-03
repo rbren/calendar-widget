@@ -8,7 +8,10 @@ import {
   isSameDay,
   isDateInRange,
   isDateDisabled,
+  isDateRange,
+  isDateBetween,
   formatMonthYear,
+  formatDayLabel,
 } from '@calendar-widget/core';
 ```
 
@@ -100,6 +103,45 @@ isDateDisabled(new Date(2026, 11, 24), holidays); // false
 
 ---
 
+## isDateRange
+
+```ts
+function isDateRange(value: unknown): value is { start: Date; end: Date }
+```
+
+Type guard that returns `true` if the value is a `DateRange` object (an object with `start` and `end` properties that are both `Date` instances).
+
+**Example:**
+
+```ts
+isDateRange({ start: new Date(), end: new Date() }); // true
+isDateRange(new Date());                              // false
+isDateRange(null);                                    // false
+```
+
+---
+
+## isDateBetween
+
+```ts
+function isDateBetween(date: Date, start: Date, end: Date): boolean
+```
+
+Returns `true` if the date falls strictly between `start` and `end` (exclusive on both ends). The order of `start` and `end` does not matter — they are automatically sorted.
+
+**Example:**
+
+```ts
+const start = new Date(2026, 2, 10);
+const end = new Date(2026, 2, 20);
+
+isDateBetween(new Date(2026, 2, 15), start, end); // true
+isDateBetween(new Date(2026, 2, 10), start, end); // false (exclusive)
+isDateBetween(new Date(2026, 2, 20), start, end); // false (exclusive)
+```
+
+---
+
 ## formatMonthYear
 
 ```ts
@@ -114,4 +156,51 @@ Formats a date as `"Month Year"` using `Intl.DateTimeFormat`.
 formatMonthYear(new Date(2026, 2, 1));          // "March 2026"
 formatMonthYear(new Date(2026, 2, 1), 'fr-FR'); // "mars 2026"
 formatMonthYear(new Date(2026, 2, 1), 'ja-JP'); // "2026年3月"
+```
+
+---
+
+## formatDayLabel
+
+```ts
+function formatDayLabel(
+  date: Date,
+  locale: string | undefined,
+  flags: {
+    isToday: boolean;
+    isSelected: boolean;
+    isDisabled: boolean;
+    isRangeStart?: boolean;
+    isRangeEnd?: boolean;
+    isInRange?: boolean;
+  },
+  markerLabel?: string,
+): string
+```
+
+Builds a full accessible label for a day cell. Formats the date as a long weekday + month + day + year string, then appends status annotations in parentheses.
+
+**Example:**
+
+```ts
+formatDayLabel(
+  new Date(2026, 2, 15),
+  'en-US',
+  { isToday: true, isSelected: true, isDisabled: false },
+);
+// "Sunday, March 15, 2026 (today, selected)"
+
+formatDayLabel(
+  new Date(2026, 2, 10),
+  'en-US',
+  { isToday: false, isSelected: false, isDisabled: false, isRangeStart: true },
+);
+// "Tuesday, March 10, 2026 (selected, start of range)"
+
+formatDayLabel(
+  new Date(2026, 2, 12),
+  'en-US',
+  { isToday: false, isSelected: false, isDisabled: true },
+);
+// "Thursday, March 12, 2026 (unavailable)"
 ```
