@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import {
   getCalendarDays,
   isSameDay,
@@ -26,33 +26,35 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   const [focusedDate, setFocusedDate] = useState(initialDate);
 
-  const prevValueRef = useRef(value);
+  // Sync viewDate and focusedDate when the value prop changes externally.
+  // Uses the "adjust state during render" pattern recommended by React docs
+  // to avoid cascading renders from setState-in-useEffect.
+  const [prevValue, setPrevValue] = useState(value);
+  const valueChanged =
+    value !== prevValue &&
+    !(
+      value instanceof Date &&
+      prevValue instanceof Date &&
+      isSameDay(value, prevValue)
+    ) &&
+    !(value == null && prevValue == null);
 
-  useEffect(() => {
-    const prevValue = prevValueRef.current;
-    prevValueRef.current = value;
-
+  if (valueChanged) {
+    setPrevValue(value);
     if (value instanceof Date) {
-      const changed =
-        !(prevValue instanceof Date) || !isSameDay(prevValue, value);
-      if (!changed) return;
-
       const newMonth = value.getMonth();
       const newYear = value.getFullYear();
-      setViewDate((prev) => {
-        if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
-          return new Date(newYear, newMonth, 1);
-        }
-        return prev;
-      });
-      setFocusedDate((prev) => {
-        if (!isSameDay(prev, value)) {
-          return value;
-        }
-        return prev;
-      });
+      if (
+        viewDate.getMonth() !== newMonth ||
+        viewDate.getFullYear() !== newYear
+      ) {
+        setViewDate(new Date(newYear, newMonth, 1));
+      }
+      if (!isSameDay(focusedDate, value)) {
+        setFocusedDate(value);
+      }
     }
-  }, [value]);
+  }
 
   const goToPrevMonth = useCallback(() => {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
