@@ -250,3 +250,155 @@ describe('useCalendarState', () => {
     expect(result.current.activeView).toBe('days');
   });
 });
+
+describe('useCalendarState onMonthChange', () => {
+  it('fires onMonthChange on goToNextMonth', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onMonthChange }),
+    );
+    act(() => result.current.goToNextMonth());
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    expect(onMonthChange.mock.calls[0][0].getMonth()).toBe(4);
+    expect(onMonthChange.mock.calls[0][0].getDate()).toBe(1);
+  });
+
+  it('fires onMonthChange on goToPrevMonth', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onMonthChange }),
+    );
+    act(() => result.current.goToPrevMonth());
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    expect(onMonthChange.mock.calls[0][0].getMonth()).toBe(2);
+  });
+
+  it('fires onMonthChange on selectMonth (quick-nav)', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({
+        value: new Date(2026, 3, 10),
+        onMonthChange,
+        quickNavigation: true,
+      }),
+    );
+    act(() => result.current.selectMonth(8)); // September
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    expect(onMonthChange.mock.calls[0][0].getMonth()).toBe(8);
+    expect(onMonthChange.mock.calls[0][0].getFullYear()).toBe(2026);
+  });
+
+  it('fires onMonthChange on goToToday when month changes', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2020, 0, 15), onMonthChange }),
+    );
+    act(() => result.current.goToToday());
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const now = new Date();
+    expect(onMonthChange.mock.calls[0][0].getMonth()).toBe(now.getMonth());
+    expect(onMonthChange.mock.calls[0][0].getFullYear()).toBe(
+      now.getFullYear(),
+    );
+  });
+
+  it('does not fire onMonthChange on initial render', () => {
+    const onMonthChange = vi.fn();
+    renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onMonthChange }),
+    );
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onMonthChange when value prop changes externally', () => {
+    const onMonthChange = vi.fn();
+    const { rerender } = renderHook((props) => useCalendarState(props), {
+      initialProps: {
+        value: new Date(2026, 3, 10) as Date | null,
+        onMonthChange,
+      },
+    });
+    rerender({ value: new Date(2026, 8, 1), onMonthChange });
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('fires onMonthChange on focusDate when it crosses a month boundary', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 28), onMonthChange }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 4, 5)));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    expect(onMonthChange.mock.calls[0][0].getMonth()).toBe(4);
+  });
+
+  it('does not fire onMonthChange on focusDate within same month', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onMonthChange }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 3, 20)));
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onMonthChange on selectYear (stays in month picker)', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({
+        value: new Date(2026, 3, 10),
+        onMonthChange,
+        quickNavigation: true,
+      }),
+    );
+    act(() => result.current.selectYear(2022));
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onMonthChange on goToPrevYear / goToNextYear', () => {
+    const onMonthChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({
+        value: new Date(2026, 3, 10),
+        onMonthChange,
+        quickNavigation: true,
+      }),
+    );
+    act(() => result.current.goToPrevYear());
+    act(() => result.current.goToNextYear());
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('useCalendarState onDayFocus', () => {
+  it('fires onDayFocus when focusDate is called', () => {
+    const onDayFocus = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onDayFocus }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 3, 15)));
+    expect(onDayFocus).toHaveBeenCalledOnce();
+    expect(onDayFocus.mock.calls[0][0].getDate()).toBe(15);
+  });
+
+  it('fires onDayFocus on each focusDate call', () => {
+    const onDayFocus = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onDayFocus }),
+    );
+    act(() => result.current.focusDate(new Date(2026, 3, 11)));
+    act(() => result.current.focusDate(new Date(2026, 3, 12)));
+    act(() => result.current.focusDate(new Date(2026, 3, 13)));
+    expect(onDayFocus).toHaveBeenCalledTimes(3);
+    expect(onDayFocus.mock.calls[0][0].getDate()).toBe(11);
+    expect(onDayFocus.mock.calls[1][0].getDate()).toBe(12);
+    expect(onDayFocus.mock.calls[2][0].getDate()).toBe(13);
+  });
+
+  it('does not fire onDayFocus on mount', () => {
+    const onDayFocus = vi.fn();
+    renderHook(() =>
+      useCalendarState({ value: new Date(2026, 3, 10), onDayFocus }),
+    );
+    expect(onDayFocus).not.toHaveBeenCalled();
+  });
+});

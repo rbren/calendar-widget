@@ -667,3 +667,228 @@ describe('CalendarWidget renderDay', () => {
     expect(cell).toHaveAttribute('role', 'gridcell');
   });
 });
+
+describe('CalendarWidget onMonthChange', () => {
+  it('fires onMonthChange when navigating forward', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText('Next month'));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getFullYear()).toBe(2026);
+    expect(arg.getMonth()).toBe(4); // May
+    expect(arg.getDate()).toBe(1);
+  });
+
+  it('fires onMonthChange when navigating backward', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText('Previous month'));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getFullYear()).toBe(2026);
+    expect(arg.getMonth()).toBe(2); // March
+    expect(arg.getDate()).toBe(1);
+  });
+
+  it('fires onMonthChange 3 times when navigating forward 3 months', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText('Next month'));
+    await userEvent.click(screen.getByLabelText('Next month'));
+    await userEvent.click(screen.getByLabelText('Next month'));
+    expect(onMonthChange).toHaveBeenCalledTimes(3);
+    // Should be May, June, July
+    expect((onMonthChange.mock.calls[0][0] as Date).getMonth()).toBe(4);
+    expect((onMonthChange.mock.calls[1][0] as Date).getMonth()).toBe(5);
+    expect((onMonthChange.mock.calls[2][0] as Date).getMonth()).toBe(6);
+  });
+
+  it('fires onMonthChange when quick-nav selects a month', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    // Open month picker
+    await userEvent.click(
+      screen.getByRole('button', { name: /choose month and year/i }),
+    );
+    // Select June
+    await userEvent.click(screen.getByText('Jun'));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getFullYear()).toBe(2026);
+    expect(arg.getMonth()).toBe(5); // June
+  });
+
+  it('fires onMonthChange via full quick-nav flow (year picker → month picker)', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    // Open month picker
+    await userEvent.click(
+      screen.getByRole('button', { name: /choose month and year/i }),
+    );
+    // Open year picker
+    await userEvent.click(screen.getByRole('button', { name: /choose year/i }));
+    // Select 2022
+    await userEvent.click(screen.getByText('2022'));
+    // Still in month picker, no onMonthChange yet
+    expect(onMonthChange).not.toHaveBeenCalled();
+    // Select August
+    await userEvent.click(screen.getByText('Aug'));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getFullYear()).toBe(2022);
+    expect(arg.getMonth()).toBe(7); // August
+  });
+
+  it('fires onMonthChange when Today button changes month', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2020, 0, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const now = new Date();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getFullYear()).toBe(now.getFullYear());
+    expect(arg.getMonth()).toBe(now.getMonth());
+    expect(arg.getDate()).toBe(1);
+  });
+
+  it('does not fire onMonthChange when Today button is clicked while on current month', async () => {
+    const onMonthChange = vi.fn();
+    const now = new Date();
+    render(
+      <CalendarWidget
+        value={now}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    // The Today button should be disabled when already on current month
+    // Clicking it should not fire onMonthChange
+    const btn = screen.getByRole('button', {
+      name: 'Navigate to current month',
+    });
+    await userEvent.click(btn);
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onMonthChange on initial mount', () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onMonthChange when parent updates value prop', () => {
+    const onMonthChange = vi.fn();
+    const { rerender } = render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    // Parent changes value to a different month
+    rerender(
+      <CalendarWidget
+        value={new Date(2026, 6, 10)}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    expect(onMonthChange).not.toHaveBeenCalled();
+  });
+});
+
+describe('CalendarWidget onDayFocus', () => {
+  it('fires onDayFocus during keyboard navigation', async () => {
+    const onDayFocus = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onDayFocus={onDayFocus}
+        locale="en-US"
+      />,
+    );
+    // Click on day 15 to focus the grid
+    await userEvent.click(screen.getByLabelText(/April 15, 2026/));
+    onDayFocus.mockClear();
+
+    // Arrow right 3 times (15 → 16 → 17 → 18)
+    await userEvent.keyboard('{ArrowRight}');
+    await userEvent.keyboard('{ArrowRight}');
+    await userEvent.keyboard('{ArrowRight}');
+
+    expect(onDayFocus).toHaveBeenCalledTimes(3);
+    expect((onDayFocus.mock.calls[0][0] as Date).getDate()).toBe(16);
+    expect((onDayFocus.mock.calls[1][0] as Date).getDate()).toBe(17);
+    expect((onDayFocus.mock.calls[2][0] as Date).getDate()).toBe(18);
+  });
+
+  it('fires onDayFocus with correct dates across 5 arrow-key moves', async () => {
+    const onDayFocus = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 10)}
+        onDayFocus={onDayFocus}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText(/April 10, 2026/));
+    onDayFocus.mockClear();
+
+    // 5 arrow-down moves (each jumps 1 week)
+    for (let i = 0; i < 5; i++) {
+      await userEvent.keyboard('{ArrowDown}');
+    }
+
+    expect(onDayFocus).toHaveBeenCalledTimes(5);
+    expect((onDayFocus.mock.calls[0][0] as Date).getDate()).toBe(17);
+    expect((onDayFocus.mock.calls[1][0] as Date).getDate()).toBe(24);
+    // April 10 + 3 weeks = May 1
+    expect((onDayFocus.mock.calls[2][0] as Date).getMonth()).toBe(4); // May
+    expect((onDayFocus.mock.calls[2][0] as Date).getDate()).toBe(1);
+  });
+});

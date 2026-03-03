@@ -54,6 +54,13 @@ export interface CalendarWidgetProps {
     dayNumber: React.ReactNode,
     info: DayRenderInfo,
   ) => React.ReactNode;
+  /** Called when the displayed month changes via navigation, quick-nav, or today button.
+   *  Receives a Date representing the first day of the newly displayed month.
+   *  Does not fire on initial mount or when the parent updates the value prop. */
+  onMonthChange?: (month: Date) => void;
+  /** Called when keyboard focus moves to a new day cell.
+   *  Useful for showing previews or loading details for the focused date. */
+  onDayFocus?: (date: Date) => void;
   /** Additional CSS class for the root element */
   className?: string;
 }

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   getCalendarDays,
   isSameDay,
@@ -14,6 +14,8 @@ export function useCalendarState(props: CalendarWidgetProps) {
     mode = 'single',
     value,
     onChange,
+    onMonthChange,
+    onDayFocus,
     locale,
     minDate,
     maxDate,
@@ -92,6 +94,16 @@ export function useCalendarState(props: CalendarWidgetProps) {
     }
   }
 
+  // Stable ref to latest onMonthChange to avoid stale closures in callbacks.
+  const onMonthChangeRef = useRef(onMonthChange);
+  useEffect(() => {
+    onMonthChangeRef.current = onMonthChange;
+  });
+
+  const fireMonthChange = useCallback((newViewDate: Date) => {
+    onMonthChangeRef.current?.(newViewDate);
+  }, []);
+
   const today = new Date();
   const isCurrentMonth =
     viewDate.getFullYear() === today.getFullYear() &&
@@ -99,30 +111,59 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   const goToToday = useCallback(() => {
     const now = new Date();
-    setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
+    const newView = new Date(now.getFullYear(), now.getMonth(), 1);
+    setViewDate((prev) => {
+      if (
+        prev.getMonth() !== newView.getMonth() ||
+        prev.getFullYear() !== newView.getFullYear()
+      ) {
+        fireMonthChange(newView);
+      }
+      return newView;
+    });
     setFocusedDate(now);
     setActiveView('days');
-  }, []);
+  }, [fireMonthChange]);
 
   const goToPrevMonth = useCallback(() => {
-    setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
-  }, []);
+    setViewDate((prev) => {
+      const next = new Date(prev.getFullYear(), prev.getMonth() - 1, 1);
+      fireMonthChange(next);
+      return next;
+    });
+  }, [fireMonthChange]);
 
   const goToNextMonth = useCallback(() => {
-    setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  }, []);
-
-  const focusDate = useCallback((date: Date) => {
-    setFocusedDate(date);
-    const newMonth = date.getMonth();
-    const newYear = date.getFullYear();
     setViewDate((prev) => {
-      if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
-        return new Date(newYear, newMonth, 1);
-      }
-      return prev;
+      const next = new Date(prev.getFullYear(), prev.getMonth() + 1, 1);
+      fireMonthChange(next);
+      return next;
     });
-  }, []);
+  }, [fireMonthChange]);
+
+  // Stable ref to latest onDayFocus to avoid stale closures.
+  const onDayFocusRef = useRef(onDayFocus);
+  useEffect(() => {
+    onDayFocusRef.current = onDayFocus;
+  });
+
+  const focusDate = useCallback(
+    (date: Date) => {
+      setFocusedDate(date);
+      onDayFocusRef.current?.(date);
+      const newMonth = date.getMonth();
+      const newYear = date.getFullYear();
+      setViewDate((prev) => {
+        if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
+          const newView = new Date(newYear, newMonth, 1);
+          fireMonthChange(newView);
+          return newView;
+        }
+        return prev;
+      });
+    },
+    [fireMonthChange],
+  );
 
   const weeks = useMemo(
     () =>
@@ -208,11 +249,13 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   const selectMonth = useCallback(
     (month: number) => {
-      setViewDate(new Date(viewDate.getFullYear(), month, 1));
-      setFocusedDate(new Date(viewDate.getFullYear(), month, 1));
+      const newView = new Date(viewDate.getFullYear(), month, 1);
+      setViewDate(newView);
+      setFocusedDate(newView);
       setActiveView('days');
+      fireMonthChange(newView);
     },
-    [viewDate],
+    [viewDate, fireMonthChange],
   );
 
   const selectYear = useCallback(
