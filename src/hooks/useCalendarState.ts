@@ -34,24 +34,26 @@ export function useCalendarState(props: CalendarWidgetProps) {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   }, []);
 
-  const focusDate = useCallback(
-    (date: Date) => {
-      setFocusedDate(date);
-      // If the focused date moves out of the currently viewed month, navigate
-      const newMonth = date.getMonth();
-      const newYear = date.getFullYear();
-      setViewDate((prev) => {
-        if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
-          return new Date(newYear, newMonth, 1);
-        }
-        return prev;
-      });
-    },
-    [],
-  );
+  const focusDate = useCallback((date: Date) => {
+    setFocusedDate(date);
+    // If the focused date moves out of the currently viewed month, navigate
+    const newMonth = date.getMonth();
+    const newYear = date.getFullYear();
+    setViewDate((prev) => {
+      if (prev.getMonth() !== newMonth || prev.getFullYear() !== newYear) {
+        return new Date(newYear, newMonth, 1);
+      }
+      return prev;
+    });
+  }, []);
 
   const weeks = useMemo(
-    () => getCalendarDays(viewDate.getFullYear(), viewDate.getMonth(), weekStartsOn),
+    () =>
+      getCalendarDays(
+        viewDate.getFullYear(),
+        viewDate.getMonth(),
+        weekStartsOn,
+      ),
     [viewDate, weekStartsOn],
   );
 

@@ -38,11 +38,7 @@ export function isSameDay(a: Date, b: Date): boolean {
 }
 
 /** Returns true if the date falls within the optional min/max range (inclusive). */
-export function isDateInRange(
-  date: Date,
-  min?: Date,
-  max?: Date,
-): boolean {
+export function isDateInRange(date: Date, min?: Date, max?: Date): boolean {
   if (min) {
     const minDay = new Date(min.getFullYear(), min.getMonth(), min.getDate());
     if (date < minDay) return false;
@@ -56,10 +52,7 @@ export function isDateInRange(
 }
 
 /** Returns true if the date matches any of the disabled dates. */
-export function isDateDisabled(
-  date: Date,
-  disabledDates: Date[],
-): boolean {
+export function isDateDisabled(date: Date, disabledDates: Date[]): boolean {
   return disabledDates.some((d) => isSameDay(date, d));
 }
 

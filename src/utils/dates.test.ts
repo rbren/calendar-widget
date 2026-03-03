@@ -72,7 +72,9 @@ describe('isDateInRange', () => {
   });
 
   it('returns true when within min and max', () => {
-    expect(isDateInRange(date, new Date(2026, 5, 1), new Date(2026, 5, 30))).toBe(true);
+    expect(
+      isDateInRange(date, new Date(2026, 5, 1), new Date(2026, 5, 30)),
+    ).toBe(true);
   });
 
   it('returns true when date equals min', () => {

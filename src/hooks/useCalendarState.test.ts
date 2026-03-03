@@ -68,9 +68,7 @@ describe('useCalendarState', () => {
 
   it('calls onChange when selecting a valid date', () => {
     const onChange = vi.fn();
-    const { result } = renderHook(() =>
-      useCalendarState({ onChange }),
-    );
+    const { result } = renderHook(() => useCalendarState({ onChange }));
     const date = new Date(2026, 3, 10);
     act(() => result.current.selectDate(date));
     expect(onChange).toHaveBeenCalledWith(date);
@@ -106,9 +104,7 @@ describe('useCalendarState', () => {
 
   it('isSelected returns true for selected single date', () => {
     const selected = new Date(2026, 3, 10);
-    const { result } = renderHook(() =>
-      useCalendarState({ value: selected }),
-    );
+    const { result } = renderHook(() => useCalendarState({ value: selected }));
     expect(result.current.isSelected(new Date(2026, 3, 10))).toBe(true);
     expect(result.current.isSelected(new Date(2026, 3, 11))).toBe(false);
   });

@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CalendarWidget } from './CalendarWidget';
-import styles from './CalendarWidget.module.css';
 
 describe('CalendarWidget', () => {
   it('renders with default props', () => {
