@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0056 — `CalendarGridProps` Type Exported Without `CalendarGrid` Component

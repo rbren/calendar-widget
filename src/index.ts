@@ -1,6 +1,7 @@
 // Components
 export { CalendarWidget } from './components/CalendarWidget';
 export { CalendarHeader } from './components/CalendarHeader';
+export { CalendarGrid } from './components/CalendarGrid';
 export { CalendarDayCell } from './components/CalendarDayCell';
 
 // Hooks
