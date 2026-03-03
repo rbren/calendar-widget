@@ -21,7 +21,7 @@
   "engines": {
     "node": ">=20.19.0"
   },
-  "sideEffects": false,
+  "sideEffects": ["*.css"],
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --declarationDir dist/types",
     "prebuild": "rm -rf dist",
