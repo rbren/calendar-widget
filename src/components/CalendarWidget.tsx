@@ -19,6 +19,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     quickNavigation = true,
     showTodayButton = true,
     todayButtonLabel = 'Today',
+    renderDay,
     className,
     value,
   } = props;
@@ -113,6 +114,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
           onSelectDate={selectDate}
           onFocusDate={focusDate}
           onHoverDate={hoverDate}
+          renderDay={renderDay}
         />
       )}
       {activeView === 'months' && (

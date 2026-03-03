@@ -1,9 +1,26 @@
+import React from 'react';
+
 export interface DateRange {
   start: Date;
   end: Date;
 }
 
 export type CalendarView = 'days' | 'months' | 'years';
+
+export interface DayRenderInfo {
+  /** The date this cell represents */
+  date: Date;
+  /** Whether this date is in the currently displayed month */
+  isCurrentMonth: boolean;
+  /** Whether this date is today */
+  isToday: boolean;
+  /** Whether this date is selected */
+  isSelected: boolean;
+  /** Whether this date is disabled */
+  isDisabled: boolean;
+  /** Whether this date is within a selected range (if mode="range") */
+  isInRange?: boolean;
+}
 
 export interface CalendarWidgetProps {
   /** Selection mode: pick one date, or a start–end range (default: 'single') */
@@ -30,6 +47,13 @@ export interface CalendarWidgetProps {
   showTodayButton?: boolean;
   /** Custom label for the today button (default: "Today"). Useful for i18n. */
   todayButtonLabel?: string;
+  /** Custom render function for day cell content.
+   *  Receives the day number as default content and context info.
+   *  Return a ReactNode to replace the default content. */
+  renderDay?: (
+    dayNumber: React.ReactNode,
+    info: DayRenderInfo,
+  ) => React.ReactNode;
   /** Additional CSS class for the root element */
   className?: string;
 }
@@ -122,6 +146,11 @@ export interface CalendarGridProps {
   onFocusDate: (date: Date) => void;
   /** Called when a day is hovered (for range preview) */
   onHoverDate?: (date: Date | null) => void;
+  /** Custom render function for day cell content */
+  renderDay?: (
+    dayNumber: React.ReactNode,
+    info: DayRenderInfo,
+  ) => React.ReactNode;
 }
 
 export interface CalendarDayCellProps {
@@ -157,4 +186,9 @@ export interface CalendarDayCellProps {
   locale?: string;
   /** Optional marker/event label to include in the accessible name */
   markerLabel?: string;
+  /** Custom render function for day cell content */
+  renderDay?: (
+    dayNumber: React.ReactNode,
+    info: DayRenderInfo,
+  ) => React.ReactNode;
 }

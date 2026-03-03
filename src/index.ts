@@ -13,6 +13,7 @@ export { useCalendarState } from './hooks/useCalendarState';
 export type {
   CalendarView,
   DateRange,
+  DayRenderInfo,
   CalendarWidgetProps,
   CalendarHeaderProps,
   CalendarGridProps,

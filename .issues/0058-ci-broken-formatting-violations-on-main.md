@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0058 — CI Broken: Formatting Violations on Main Branch

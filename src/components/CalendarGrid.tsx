@@ -65,6 +65,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   onSelectDate,
   onFocusDate,
   onHoverDate,
+  renderDay,
 }) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const today = new Date();
@@ -265,6 +266,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
                     onSelect={onSelectDate}
                     onHover={onHoverDate}
                     locale={locale}
+                    renderDay={renderDay}
                   />
                 );
               })}

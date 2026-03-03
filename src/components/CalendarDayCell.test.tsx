@@ -1,9 +1,11 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CalendarDayCell } from './CalendarDayCell';
+import type { CalendarDayCellProps } from '../types/calendar';
 import styles from './CalendarDayCell.module.css';
 
-const defaultProps = {
+const defaultProps: CalendarDayCellProps = {
   date: new Date(2026, 3, 15),
   isCurrentMonth: true,
   isToday: false,
@@ -14,7 +16,7 @@ const defaultProps = {
   locale: 'en-US',
 };
 
-function renderCell(overrides: Partial<typeof defaultProps> = {}) {
+function renderCell(overrides: Partial<CalendarDayCellProps> = {}) {
   return render(
     <table>
       <tbody>
@@ -166,6 +168,117 @@ describe('CalendarDayCell', () => {
       expect(label).toContain('Mittwoch');
       expect(label).toContain('April');
       expect(label).toContain('2026');
+    });
+  });
+
+  describe('renderDay', () => {
+    it('renders default content when renderDay is not provided', () => {
+      renderCell();
+      expect(screen.getByText('15')).toBeInTheDocument();
+    });
+
+    it('renders custom content from renderDay', () => {
+      renderCell({
+        renderDay: (dayNumber) => (
+          <div>
+            {dayNumber}
+            <span data-testid="custom-badge">🔴</span>
+          </div>
+        ),
+      });
+      expect(screen.getByText('15')).toBeInTheDocument();
+      expect(screen.getByTestId('custom-badge')).toBeInTheDocument();
+    });
+
+    it('wraps day number in custom element', () => {
+      renderCell({
+        renderDay: (dayNumber) => <strong>{dayNumber}</strong>,
+      });
+      const strong = screen.getByText('15').closest('strong');
+      expect(strong).toBeInTheDocument();
+    });
+
+    it('can completely replace default content', () => {
+      renderCell({
+        renderDay: () => <span data-testid="replacement">Custom</span>,
+      });
+      expect(screen.getByTestId('replacement')).toBeInTheDocument();
+      expect(screen.queryByText('15')).not.toBeInTheDocument();
+    });
+
+    it('passes correct context info to renderDay', () => {
+      const renderDay = vi.fn((dayNumber: React.ReactNode) => dayNumber);
+      renderCell({
+        isCurrentMonth: true,
+        isToday: true,
+        isSelected: true,
+        isDisabled: false,
+        isInRange: true,
+        renderDay,
+      });
+      expect(renderDay).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          date: defaultProps.date,
+          isCurrentMonth: true,
+          isToday: true,
+          isSelected: true,
+          isDisabled: false,
+          isInRange: true,
+        }),
+      );
+    });
+
+    it('passes isDisabled=true in context when date is disabled', () => {
+      const renderDay = vi.fn((dayNumber: React.ReactNode) => dayNumber);
+      renderCell({ isDisabled: true, renderDay });
+      expect(renderDay).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ isDisabled: true }),
+      );
+    });
+
+    it('preserves ARIA attributes when renderDay is used', () => {
+      renderCell({
+        isSelected: true,
+        isToday: true,
+        isDisabled: false,
+        isFocusTarget: true,
+        renderDay: (dayNumber) => <strong>{dayNumber}</strong>,
+      });
+      const cell = screen.getByRole('gridcell');
+      expect(cell).toHaveAttribute('aria-selected', 'true');
+      expect(cell).toHaveAttribute('aria-current', 'date');
+      expect(cell).toHaveAttribute('tabindex', '0');
+      expect(cell).toHaveAttribute('aria-label');
+    });
+
+    it('preserves keyboard navigation with renderDay', async () => {
+      const onSelect = vi.fn();
+      renderCell({
+        onSelect,
+        isFocusTarget: true,
+        renderDay: (dayNumber) => <strong>{dayNumber}</strong>,
+      });
+      const cell = screen.getByRole('gridcell');
+      cell.focus();
+      await userEvent.keyboard('{Enter}');
+      expect(onSelect).toHaveBeenCalledWith(defaultProps.date);
+    });
+
+    it('preserves click handler with renderDay', async () => {
+      const onSelect = vi.fn();
+      renderCell({
+        onSelect,
+        renderDay: (dayNumber) => (
+          <div>
+            {dayNumber}
+            <span>extra</span>
+          </div>
+        ),
+      });
+      await userEvent.click(screen.getByText('15'));
+      expect(onSelect).toHaveBeenCalledWith(defaultProps.date);
     });
   });
 });

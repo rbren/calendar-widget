@@ -592,3 +592,58 @@ describe('CalendarWidget quick navigation', () => {
     });
   });
 });
+
+describe('CalendarWidget renderDay', () => {
+  it('renders custom content via renderDay', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        locale="en-US"
+        renderDay={(dayNumber, { isToday }) => (
+          <div>
+            {dayNumber}
+            {isToday && <span data-testid="today-badge">★</span>}
+          </div>
+        )}
+      />,
+    );
+    expect(screen.getByText('15')).toBeInTheDocument();
+  });
+
+  it('renders default content without renderDay', () => {
+    render(<CalendarWidget value={new Date(2026, 3, 15)} locale="en-US" />);
+    expect(screen.getByText('15')).toBeInTheDocument();
+    const cell = screen.getByLabelText(/April 15, 2026/);
+    // Default: just a span with the day number
+    expect(cell.querySelector('span')).toHaveTextContent('15');
+  });
+
+  it('preserves keyboard navigation with renderDay', async () => {
+    const onChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        onChange={onChange}
+        locale="en-US"
+        renderDay={(dayNumber) => <strong>{dayNumber}</strong>}
+      />,
+    );
+    // Click on day 10 (rendered through renderDay)
+    await userEvent.click(screen.getByText('10'));
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(onChange.mock.calls[0][0].getDate()).toBe(10);
+  });
+
+  it('preserves ARIA attributes with renderDay', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        locale="en-US"
+        renderDay={(dayNumber) => <strong>{dayNumber}</strong>}
+      />,
+    );
+    const cell = screen.getByLabelText(/April 15, 2026/);
+    expect(cell).toHaveAttribute('aria-selected', 'true');
+    expect(cell).toHaveAttribute('role', 'gridcell');
+  });
+});

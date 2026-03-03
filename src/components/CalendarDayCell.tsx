@@ -20,6 +20,7 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   onHover,
   locale,
   markerLabel,
+  renderDay,
 }) => {
   const handleClick = () => {
     if (!isDisabled) {
@@ -63,6 +64,19 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
     markerLabel,
   );
 
+  const defaultContent = <span>{date.getDate()}</span>;
+
+  const content = renderDay
+    ? renderDay(defaultContent, {
+        date,
+        isCurrentMonth,
+        isToday,
+        isSelected,
+        isDisabled,
+        isInRange,
+      })
+    : defaultContent;
+
   return (
     <td
       role="gridcell"
@@ -76,7 +90,7 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
       onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
     >
-      <span>{date.getDate()}</span>
+      {content}
     </td>
   );
 };
