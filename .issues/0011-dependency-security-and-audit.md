@@ -58,3 +58,13 @@ This ensures vulnerabilities are patched promptly via automated PRs.
 - `package-lock.json` is committed and not in `.gitignore`
 - CI pipeline includes the audit step and fails if a high-severity vulnerability is present
 - (If Dependabot is configured) — `.github/dependabot.yml` exists and Dependabot opens PRs when updates are available
+
+## Architect Notes
+
+Progress check as of commit `e2024a6`:
+
+- **Zero runtime dependencies** ✓ — `package.json` has no `dependencies` field; only `peerDependencies` and `devDependencies`.
+- **`package-lock.json` committed** ✓ — Present in the repo, not gitignored.
+- **`npm audit --audit-level=high` passes** ✓ — No vulnerabilities found.
+- **CI `npm audit` step** ✗ — `.github/workflows/ci.yml` does not include an `npm audit` step. This is the primary remaining item.
+- **Dependabot** ✗ — No `.github/dependabot.yml` exists. Recommended but not blocking.

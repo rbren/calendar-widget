@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0047 — Node Engine Requirements and CI Matrix Mismatch
@@ -60,3 +60,5 @@ Partial progress as of commit `7c0376ef`:
 
 - **CI matrix updated** -- Node 18 removed, matrix is now `[20, 22]`. CI passes on both. DONE.
 - **`engines` field still missing** -- `package.json` has no `engines` field. This is the remaining work item. Without it, consumers and CI have no declared Node version requirement.
+
+Verified as of commit `ec552f3` (which also fixed issue 0048) — `package.json` now declares `"engines": { "node": ">=20.19.0" }`. Both items complete. Closing.

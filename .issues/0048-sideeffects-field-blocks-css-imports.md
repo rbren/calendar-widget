@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0048 -- `sideEffects: false` May Cause Bundlers to Drop CSS Imports

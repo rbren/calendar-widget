@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0009 — README & Documentation
@@ -79,3 +79,5 @@ A README now exists with good coverage of features, installation, quick start, p
 3. **Peer dependency inaccuracy** -- README states "Peer dependencies: React 19+ and ReactDOM 19+" but `package.json` declares `"react": "^18.0.0 || ^19.0.0"`. The README is more restrictive than the actual peer deps.
 4. **Quick start missing import** -- The code example does not include `import { useState } from 'react'`, making it not copy-pasteable as-is.
 5. **No CONTRIBUTING.md** (recommended but optional per original spec).
+
+Verified as of commit `e2024a6` — all five gaps are resolved. Badges present (CI, npm, license). Development section with clone/install/test/build instructions added. Peer dependency wording corrected to "React 18+ and ReactDOM 18+ (^18.0.0 || ^19.0.0)". Quick start includes `useState` import. CONTRIBUTING.md remains absent but was optional. Closing.
