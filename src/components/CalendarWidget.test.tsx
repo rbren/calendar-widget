@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CalendarWidget } from './CalendarWidget';
+import styles from './CalendarWidget.module.css';
 
 describe('CalendarWidget', () => {
   it('renders with default props', () => {
@@ -54,9 +55,10 @@ describe('CalendarWidget', () => {
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it('applies custom className', () => {
+  it('applies custom className to root element', () => {
     const { container } = render(<CalendarWidget className="my-cal" />);
-    expect(container.querySelector('.cw-root.my-cal')).toBeInTheDocument();
+    const root = container.firstElementChild!;
+    expect(root).toHaveClass('my-cal');
   });
 
   it('renders weekday headers starting on Monday when weekStartsOn=1', () => {

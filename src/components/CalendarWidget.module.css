@@ -1,0 +1,23 @@
+.root {
+  --cw-font-family: system-ui, sans-serif;
+  --cw-font-size: 14px;
+  --cw-color-primary: #2563eb;
+  --cw-color-bg: #ffffff;
+  --cw-color-text: #1f2937;
+  --cw-color-text-muted: #9ca3af;
+  --cw-color-hover: #eff6ff;
+  --cw-color-selected: var(--cw-color-primary);
+  --cw-color-selected-text: #ffffff;
+  --cw-color-today-ring: var(--cw-color-primary);
+  --cw-color-disabled: #e5e7eb;
+  --cw-border-radius: 6px;
+  --cw-cell-size: 36px;
+
+  font-family: var(--cw-font-family);
+  font-size: var(--cw-font-size);
+  color: var(--cw-color-text);
+  background: var(--cw-color-bg);
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+}

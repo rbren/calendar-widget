@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react';
 import { CalendarDayCell } from './CalendarDayCell';
 import { isSameDay, isDateInRange, isDateDisabled } from '../utils/dates';
 import type { CalendarGridProps } from '../types/calendar';
+import styles from './CalendarGrid.module.css';
 
 const DAY_NAMES_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -122,7 +123,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
 
   return (
     <table
-      className="cw-grid"
+      className={styles.grid}
       role="grid"
       aria-label="Calendar"
       ref={tableRef}
@@ -133,7 +134,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
           {headers.map((day) => (
             <th
               key={day}
-              className="cw-grid__weekday"
+              className={styles.weekday}
               role="columnheader"
               scope="col"
             >

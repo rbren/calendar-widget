@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CalendarHeaderProps } from '../types/calendar';
+import styles from './CalendarHeader.module.css';
 
 export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   monthYearLabel,
@@ -7,21 +8,21 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   onNextMonth,
 }) => {
   return (
-    <div className="cw-header">
+    <div className={styles.header}>
       <button
         type="button"
-        className="cw-header__nav-btn"
+        className={styles.navBtn}
         aria-label="Previous month"
         onClick={onPrevMonth}
       >
         ‹
       </button>
-      <span className="cw-header__label" aria-live="polite">
+      <span className={styles.label} aria-live="polite">
         {monthYearLabel}
       </span>
       <button
         type="button"
-        className="cw-header__nav-btn"
+        className={styles.navBtn}
         aria-label="Next month"
         onClick={onNextMonth}
       >

@@ -4,12 +4,21 @@ const AGENT_ICONS = {
   architect: '🏗️',
   engineer: '⚙️',
   pm: '📊',
+  docs: '📝',
 };
 
 const AGENT_COLORS = {
   architect: '#f78166',
   engineer: '#7ee787',
   pm: '#d2a8ff',
+  docs: '#58a6ff',
+};
+
+const STATUS_DISPLAY = {
+  working: { bg: '#3d2e00', fg: '#d29922', label: '⟳ working' },
+  done: { bg: '#1b4332', fg: '#7ee787', label: '✓ done' },
+  idle: { bg: '#272c33', fg: '#8b949e', label: '● idle' },
+  error: { bg: '#4a1d1d', fg: '#f85149', label: '✕ error' },
 };
 
 export default function AgentPanel({ agents }) {
@@ -33,6 +42,8 @@ function AgentCard({ name, data }) {
   const color = AGENT_COLORS[name] || '#58a6ff';
   const shortCommit = data.commit ? data.commit.slice(0, 7) : '—';
   const time = data.time ? new Date(data.time).toLocaleString() : '—';
+  const statusKey = data.status || 'idle';
+  const statusInfo = STATUS_DISPLAY[statusKey] || STATUS_DISPLAY.idle;
 
   return (
     <div style={{ ...styles.card, borderTopColor: color }}>
@@ -40,17 +51,26 @@ function AgentCard({ name, data }) {
         <span style={styles.icon}>{icon}</span>
         <span style={{ ...styles.name, color }}>{name}</span>
         <span style={{
-          ...styles.status,
-          background: data.clean ? '#1b4332' : '#4a1d1d',
-          color: data.clean ? '#7ee787' : '#f85149',
+          ...styles.statusBadge,
+          background: statusInfo.bg,
+          color: statusInfo.fg,
         }}>
-          {data.clean ? '✓ clean' : '⟳ working'}
+          {statusInfo.label}
         </span>
       </div>
       <div style={styles.details}>
         <div style={styles.detail}>
           <span style={styles.label}>commit</span>
           <code style={styles.code}>{shortCommit}</code>
+        </div>
+        <div style={styles.detail}>
+          <span style={styles.label}>git dir</span>
+          <span style={{
+            fontSize: 13,
+            color: data.clean ? '#7ee787' : '#d29922',
+          }}>
+            {data.clean ? 'clean' : 'dirty'}
+          </span>
         </div>
         <div style={styles.detail}>
           <span style={styles.label}>updated</span>
@@ -98,7 +118,7 @@ const styles = {
     fontSize: 15,
     textTransform: 'capitalize',
   },
-  status: {
+  statusBadge: {
     marginLeft: 'auto',
     padding: '2px 10px',
     borderRadius: 12,

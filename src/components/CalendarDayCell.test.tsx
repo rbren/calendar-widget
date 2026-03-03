@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CalendarDayCell } from './CalendarDayCell';
+import styles from './CalendarDayCell.module.css';
 
 const defaultProps = {
   date: new Date(2026, 3, 15),
@@ -56,12 +57,12 @@ describe('CalendarDayCell', () => {
 
   it('applies today class', () => {
     renderCell({ isToday: true });
-    expect(screen.getByRole('gridcell')).toHaveClass('cw-day-cell--today');
+    expect(screen.getByRole('gridcell')).toHaveClass(styles.today);
   });
 
   it('applies outside class for non-current month', () => {
     renderCell({ isCurrentMonth: false });
-    expect(screen.getByRole('gridcell')).toHaveClass('cw-day-cell--outside');
+    expect(screen.getByRole('gridcell')).toHaveClass(styles.outside);
   });
 
   it('sets aria-current="date" on today', () => {

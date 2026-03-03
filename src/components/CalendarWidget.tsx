@@ -3,6 +3,7 @@ import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { useCalendarState } from '../hooks/useCalendarState';
 import type { CalendarWidgetProps } from '../types/calendar';
+import styles from './CalendarWidget.module.css';
 
 export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
   const {
@@ -26,7 +27,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     focusDate,
   } = useCalendarState(props);
 
-  const rootClassName = ['cw-root', className].filter(Boolean).join(' ');
+  const rootClassName = [styles.root, className].filter(Boolean).join(' ');
 
   return (
     <div className={rootClassName}>

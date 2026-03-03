@@ -1,0 +1,39 @@
+.cell {
+  width: var(--cw-cell-size);
+  height: var(--cw-cell-size);
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  border-radius: var(--cw-border-radius);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s ease;
+}
+
+.cell:hover:not(.disabled):not(.selected) {
+  background: var(--cw-color-hover);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.outside {
+  color: var(--cw-color-text-muted);
+}
+
+.today {
+  box-shadow: inset 0 0 0 1.5px var(--cw-color-today-ring);
+}
+
+.selected {
+  background: var(--cw-color-selected);
+  color: var(--cw-color-selected-text);
+}
+
+.disabled {
+  color: var(--cw-color-disabled);
+  cursor: default;
+  pointer-events: none;
+}

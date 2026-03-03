@@ -1,0 +1,16 @@
+.grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.weekday {
+  width: var(--cw-cell-size);
+  height: var(--cw-cell-size);
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.85em;
+  color: var(--cw-color-text-muted);
+  padding: 0;
+}

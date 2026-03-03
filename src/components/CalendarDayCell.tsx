@@ -1,5 +1,6 @@
 import React from 'react';
 import type { CalendarDayCellProps } from '../types/calendar';
+import styles from './CalendarDayCell.module.css';
 
 export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   date,
@@ -26,11 +27,11 @@ export const CalendarDayCell: React.FC<CalendarDayCellProps> = ({
   };
 
   const classNames = [
-    'cw-day-cell',
-    !isCurrentMonth && 'cw-day-cell--outside',
-    isToday && 'cw-day-cell--today',
-    isSelected && 'cw-day-cell--selected',
-    isDisabled && 'cw-day-cell--disabled',
+    styles.cell,
+    !isCurrentMonth && styles.outside,
+    isToday && styles.today,
+    isSelected && styles.selected,
+    isDisabled && styles.disabled,
   ]
     .filter(Boolean)
     .join(' ');

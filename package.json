@@ -11,7 +11,8 @@
       "types": "./dist/types/index.d.ts",
       "import": "./dist/calendar-widget.mjs",
       "require": "./dist/calendar-widget.cjs"
-    }
+    },
+    "./style.css": "./dist/core.css"
   },
   "files": [
     "dist"

@@ -1,0 +1,115 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.app h1 {
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+}
+
+.app > p {
+  color: #64748b;
+  margin: 0 0 2rem;
+}
+
+.demos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.demo-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.demo-card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.25rem;
+}
+
+.demo-card .description {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 1rem;
+}
+
+.demo-card .selection {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #475569;
+  min-height: 1.5em;
+}
+
+/* Dark theme card background */
+.demo-card.dark {
+  background: #1e1e2e;
+  border-color: #313244;
+}
+
+.demo-card.dark h2,
+.demo-card.dark .description,
+.demo-card.dark .selection {
+  color: #cdd6f4;
+}
+
+/* Theme overrides for calendars */
+.dark-calendar {
+  --cw-color-bg: #1e1e2e;
+  --cw-color-text: #cdd6f4;
+  --cw-color-text-muted: #6c7086;
+  --cw-color-primary: #89b4fa;
+  --cw-color-hover: #313244;
+  --cw-color-selected-text: #1e1e2e;
+  --cw-color-disabled: #45475a;
+}
+
+.compact-calendar {
+  --cw-font-size: 12px;
+  --cw-cell-size: 28px;
+}
+
+.round-calendar {
+  --cw-border-radius: 50%;
+  --cw-cell-size: 40px;
+  --cw-color-primary: #8b5cf6;
+}
+
+.controls {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.controls label {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.controls select {
+  font-size: 0.85rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+}
