@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: review
+state: closed
 ---
 
 # 0013 — Year & Month Quick Navigation
