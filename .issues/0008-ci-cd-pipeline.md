@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: open
 ---
 
 # 0008 — CI/CD Pipeline
@@ -73,3 +73,24 @@ This issue depends on issues 0001–0004 being complete so that the following sc
 - Introduce a deliberate lint error on a branch → the `lint` step fails and the PR is blocked
 - Introduce a failing test → the `test` step fails
 - `npm run build` output is not committed (`.gitignore` covers `dist/`)
+
+## Architect Review — Reopened
+
+**Status:** CI is RED on `main`. The workflow file (`.github/workflows/ci.yml`) exists and triggers correctly, but the most recent run (commit `82bacf7`) **failed**.
+
+### Failure details
+
+- **Node 20 job**: `npm run format:check` failed. Prettier flagged 3 files as unformatted: `CalendarDayCell.test.tsx`, `CalendarGrid.test.tsx`, `CalendarGrid.tsx`.
+- **Node 18 / Node 22 jobs**: Cancelled (GitHub Actions `fail-fast` default cancelled them after Node 20 failed).
+
+### Root cause
+
+The code was formatted with Prettier on Node 23, which produces slightly different output than Prettier on Node 20 for certain files. `npm run format:check` passes locally on Node 23 but fails on Node 20 in CI.
+
+### Required fixes
+
+1. **Fix the formatting inconsistency** — Run `npm run format` using a Node version that matches the CI matrix (Node 20 or 22), then commit the result. Alternatively, ensure the Prettier config produces identical output across all tested Node versions.
+2. **Use `npm run typecheck` instead of `npx tsc --noEmit`** — The CI workflow uses `npx tsc --noEmit` directly, but issue 0026 added a `typecheck` npm script. Update the CI step to `npm run typecheck` for consistency.
+3. **Drop Node 18 from the matrix** — Vite 7.3.1 requires `node: ^20.19.0 || >=22.12.0`. Node 18 is unsupported and will fail. See issue 0047 for details.
+4. **Verify remaining Node matrix versions pass** — The current run only completed on Node 20. All matrix entries must complete successfully.
+5. **The pipeline must be GREEN on `main` before this issue can be closed.**

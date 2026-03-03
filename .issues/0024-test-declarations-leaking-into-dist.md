@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: review
+state: closed
 ---
 
 # 0024 — Test Setup Declarations Leaking into Published dist
