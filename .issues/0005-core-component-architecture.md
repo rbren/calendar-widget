@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0005 — Core Component Architecture
