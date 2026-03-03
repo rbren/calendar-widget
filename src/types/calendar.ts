@@ -3,6 +3,8 @@ export interface DateRange {
   end: Date;
 }
 
+export type CalendarView = 'days' | 'months' | 'years';
+
 export interface CalendarWidgetProps {
   /** Selection mode: pick one date, or a start–end range (default: 'single') */
   mode?: 'single' | 'range';
@@ -20,6 +22,8 @@ export interface CalendarWidgetProps {
   disabledDates?: Date[];
   /** Day the week starts on: 0 = Sunday, 1 = Monday (default: 0) */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /** Set to false to disable the drill-up month/year picker (default: true) */
+  quickNavigation?: boolean;
   /** Additional CSS class for the root element */
   className?: string;
 }
@@ -33,6 +37,42 @@ export interface CalendarHeaderProps {
   onPrevMonth: () => void;
   /** Navigate to next month */
   onNextMonth: () => void;
+  /** Current drill-up view */
+  activeView?: CalendarView;
+  /** Whether the heading is clickable for quick navigation */
+  quickNavigation?: boolean;
+  /** Called when the heading is clicked to drill up */
+  onDrillUp?: () => void;
+  /** Accessible label for the heading button */
+  headingAriaLabel?: string;
+}
+
+export interface MonthPickerProps {
+  /** The year being displayed */
+  year: number;
+  /** Currently viewed month (0-11) for highlight */
+  currentMonth: number;
+  /** Currently viewed year for highlight */
+  currentYear: number;
+  /** Locale for month name formatting */
+  locale?: string;
+  /** Called when a month is selected */
+  onSelectMonth: (month: number) => void;
+  /** Called when Escape is pressed */
+  onCancel: () => void;
+  /** Called when user clicks on the year label to drill up */
+  onDrillUp?: () => void;
+}
+
+export interface YearPickerProps {
+  /** The start year of the 12-year range */
+  rangeStart: number;
+  /** Currently viewed year for highlight */
+  currentYear: number;
+  /** Called when a year is selected */
+  onSelectYear: (year: number) => void;
+  /** Called when Escape is pressed */
+  onCancel: () => void;
 }
 
 export interface CalendarGridProps {

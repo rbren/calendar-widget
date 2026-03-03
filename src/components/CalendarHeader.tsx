@@ -6,6 +6,9 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   monthYearLabel,
   onPrevMonth,
   onNextMonth,
+  quickNavigation,
+  onDrillUp,
+  headingAriaLabel,
 }) => {
   return (
     <div className={styles.header}>
@@ -17,9 +20,21 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       >
         ‹
       </button>
-      <span className={styles.label} aria-live="polite">
-        {monthYearLabel}
-      </span>
+      {quickNavigation && onDrillUp ? (
+        <button
+          type="button"
+          className={styles.labelBtn}
+          aria-label={headingAriaLabel}
+          aria-live="polite"
+          onClick={onDrillUp}
+        >
+          {monthYearLabel}
+        </button>
+      ) : (
+        <span className={styles.label} aria-live="polite">
+          {monthYearLabel}
+        </span>
+      )}
       <button
         type="button"
         className={styles.navBtn}

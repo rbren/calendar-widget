@@ -1,0 +1,39 @@
+.grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.cell {
+  text-align: center;
+  padding: 0;
+  height: calc(var(--cw-cell-size) * 2);
+  font-size: 0.9em;
+  cursor: pointer;
+  border-radius: var(--cw-border-radius);
+  user-select: none;
+  color: var(--cw-color-text);
+}
+
+.cell:hover {
+  background: var(--cw-color-hover);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.cell.today {
+  box-shadow: inset 0 0 0 1px var(--cw-color-today-ring);
+}
+
+.cell.selected {
+  background: var(--cw-color-selected);
+  color: var(--cw-color-selected-text);
+}
+
+.cell.selected:hover {
+  background: var(--cw-color-selected);
+}

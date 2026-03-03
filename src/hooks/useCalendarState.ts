@@ -7,7 +7,7 @@ import {
   isDateRange,
   formatMonthYear,
 } from '../utils/dates';
-import type { CalendarWidgetProps } from '../types/calendar';
+import type { CalendarWidgetProps, CalendarView } from '../types/calendar';
 
 export function useCalendarState(props: CalendarWidgetProps) {
   const {
@@ -19,6 +19,7 @@ export function useCalendarState(props: CalendarWidgetProps) {
     maxDate,
     disabledDates = [],
     weekStartsOn = 0,
+    quickNavigation = true,
   } = props;
 
   const getInitialDate = (): Date => {
@@ -33,6 +34,14 @@ export function useCalendarState(props: CalendarWidgetProps) {
   );
 
   const [focusedDate, setFocusedDate] = useState(initialDate);
+
+  // Drill-up view state: days → months → years
+  const [activeView, setActiveView] = useState<CalendarView>('days');
+
+  // Year range start for year picker (shows 12 years starting from this)
+  const [yearRangeStart, setYearRangeStart] = useState(
+    () => viewDate.getFullYear() - (viewDate.getFullYear() % 12),
+  );
 
   // Range selection: pending start date (after first click, before second)
   const [rangeStart, setRangeStart] = useState<Date | null>(null);
@@ -164,6 +173,70 @@ export function useCalendarState(props: CalendarWidgetProps) {
     [value],
   );
 
+  // --- Quick navigation (drill-up) ---
+
+  const drillUp = useCallback(() => {
+    if (!quickNavigation) return;
+    if (activeView === 'days') {
+      setActiveView('months');
+    } else if (activeView === 'months') {
+      setYearRangeStart(viewDate.getFullYear() - (viewDate.getFullYear() % 12));
+      setActiveView('years');
+    }
+  }, [quickNavigation, activeView, viewDate]);
+
+  const drillDown = useCallback(() => {
+    if (activeView === 'years') {
+      setActiveView('months');
+    } else if (activeView === 'months') {
+      setActiveView('days');
+    }
+  }, [activeView]);
+
+  const selectMonth = useCallback(
+    (month: number) => {
+      setViewDate(new Date(viewDate.getFullYear(), month, 1));
+      setFocusedDate(new Date(viewDate.getFullYear(), month, 1));
+      setActiveView('days');
+    },
+    [viewDate],
+  );
+
+  const selectYear = useCallback(
+    (year: number) => {
+      setViewDate(new Date(year, viewDate.getMonth(), 1));
+      setActiveView('months');
+    },
+    [viewDate],
+  );
+
+  const goToPrevYear = useCallback(() => {
+    setViewDate((prev) => new Date(prev.getFullYear() - 1, prev.getMonth(), 1));
+  }, []);
+
+  const goToNextYear = useCallback(() => {
+    setViewDate((prev) => new Date(prev.getFullYear() + 1, prev.getMonth(), 1));
+  }, []);
+
+  const goToPrevYearRange = useCallback(() => {
+    setYearRangeStart((prev) => prev - 12);
+  }, []);
+
+  const goToNextYearRange = useCallback(() => {
+    setYearRangeStart((prev) => prev + 12);
+  }, []);
+
+  const headingAriaLabel = useMemo(() => {
+    if (!quickNavigation) return undefined;
+    if (activeView === 'days') {
+      return `Choose month and year, currently ${monthYearLabel}`;
+    }
+    if (activeView === 'months') {
+      return `Choose year, currently ${viewDate.getFullYear()}`;
+    }
+    return undefined;
+  }, [quickNavigation, activeView, monthYearLabel, viewDate]);
+
   return {
     viewDate,
     focusedDate,
@@ -177,5 +250,16 @@ export function useCalendarState(props: CalendarWidgetProps) {
     isSelected,
     rangeStart,
     hoveredDate,
+    activeView,
+    yearRangeStart,
+    drillUp,
+    drillDown,
+    selectMonth,
+    selectYear,
+    goToPrevYear,
+    goToNextYear,
+    goToPrevYearRange,
+    goToNextYearRange,
+    headingAriaLabel,
   };
 }

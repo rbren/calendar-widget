@@ -35,3 +35,26 @@
   font-weight: 600;
   user-select: none;
 }
+
+.labelBtn {
+  font-weight: 600;
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: var(--cw-border-radius);
+  color: var(--cw-color-text);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.labelBtn:hover {
+  background: var(--cw-color-hover);
+}
+
+.labelBtn:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
