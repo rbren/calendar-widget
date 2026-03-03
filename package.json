@@ -15,7 +15,8 @@
     "./style.css": "./dist/style.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "sideEffects": false,
   "scripts": {

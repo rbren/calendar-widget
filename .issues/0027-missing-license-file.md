@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0027 — Missing LICENSE File
