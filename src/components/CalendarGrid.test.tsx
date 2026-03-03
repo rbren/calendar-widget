@@ -175,4 +175,68 @@ describe('CalendarGrid', () => {
     // 1 header row + 6 body rows
     expect(rows).toHaveLength(7);
   });
+
+  describe('week numbers', () => {
+    it('does not render week numbers by default', () => {
+      render(<CalendarGrid {...defaultProps} />);
+      expect(screen.queryAllByRole('rowheader')).toHaveLength(0);
+      expect(screen.getAllByRole('columnheader')).toHaveLength(7);
+    });
+
+    it('renders week number column when showWeekNumbers is true', () => {
+      render(<CalendarGrid {...defaultProps} showWeekNumbers />);
+      // 7 weekday headers + 1 "#" header
+      expect(screen.getAllByRole('columnheader')).toHaveLength(8);
+      // 6 week rows → 6 row headers
+      expect(screen.getAllByRole('rowheader')).toHaveLength(6);
+    });
+
+    it('renders "#" as the week number column header', () => {
+      render(<CalendarGrid {...defaultProps} showWeekNumbers />);
+      const headers = screen.getAllByRole('columnheader');
+      expect(headers[0]).toHaveTextContent('#');
+    });
+
+    it('renders correct ISO week numbers for each row', () => {
+      // April 2026: first row starts Sun Mar 29 (or nearby depending on weekStartsOn=0)
+      render(<CalendarGrid {...defaultProps} showWeekNumbers />);
+      const rowHeaders = screen.getAllByRole('rowheader');
+      expect(rowHeaders).toHaveLength(6);
+      // Each should have an aria-label like "Week N"
+      rowHeaders.forEach((header) => {
+        expect(header.getAttribute('aria-label')).toMatch(/^Week \d+$/);
+      });
+    });
+
+    it('week number cells have tabIndex=-1 (not keyboard focusable)', () => {
+      render(<CalendarGrid {...defaultProps} showWeekNumbers />);
+      const rowHeaders = screen.getAllByRole('rowheader');
+      rowHeaders.forEach((header) => {
+        expect(header.getAttribute('tabindex')).toBe('-1');
+      });
+    });
+
+    it('still renders 42 day cells with week numbers enabled', () => {
+      render(<CalendarGrid {...defaultProps} showWeekNumbers />);
+      expect(screen.getAllByRole('gridcell')).toHaveLength(42);
+    });
+
+    it('renders correct week numbers for January 2026', () => {
+      const janWeeks = getCalendarDays(2026, 0); // January 2026
+      render(
+        <CalendarGrid
+          {...defaultProps}
+          weeks={janWeeks}
+          viewDate={new Date(2026, 0, 1)}
+          focusedDate={new Date(2026, 0, 1)}
+          showWeekNumbers
+        />,
+      );
+      const rowHeaders = screen.getAllByRole('rowheader');
+      // First row starts Dec 28, 2025 (ISO week 52)
+      expect(rowHeaders[0]).toHaveAttribute('aria-label', 'Week 52');
+      // Second row starts Jan 4, 2026 (ISO week 1)
+      expect(rowHeaders[1]).toHaveAttribute('aria-label', 'Week 1');
+    });
+  });
 });

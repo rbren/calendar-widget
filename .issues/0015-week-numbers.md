@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: open
+state: review
 ---
 
 # 0015 — Week Number Display

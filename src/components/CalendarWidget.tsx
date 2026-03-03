@@ -15,6 +15,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     maxDate,
     disabledDates,
     weekStartsOn = 0,
+    showWeekNumbers = false,
     quickNavigation = true,
     showTodayButton = true,
     todayButtonLabel = 'Today',
@@ -105,6 +106,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
           disabledDates={disabledDates}
           locale={locale}
           weekStartsOn={weekStartsOn}
+          showWeekNumbers={showWeekNumbers}
           focusedDate={focusedDate}
           rangeStart={rangeStart}
           hoveredDate={hoveredDate}

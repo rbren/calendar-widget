@@ -88,6 +88,18 @@ export function isDateBetween(date: Date, start: Date, end: Date): boolean {
   return d > lo && d < hi;
 }
 
+/** Returns the ISO 8601 week number for a given date (1–53). */
+export function getISOWeekNumber(date: Date): number {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
+  // Set to nearest Thursday: current date + 4 - current day number (Mon=1, Sun=7)
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
 /** Builds a full accessible label for a day cell (e.g. "Saturday, March 15, 2026 (today, selected)"). */
 export function formatDayLabel(
   date: Date,

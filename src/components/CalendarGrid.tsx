@@ -6,6 +6,7 @@ import {
   isDateDisabled,
   isDateRange,
   isDateBetween,
+  getISOWeekNumber,
 } from '../utils/dates';
 import type { CalendarGridProps } from '../types/calendar';
 import styles from './CalendarGrid.module.css';
@@ -57,6 +58,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   disabledDates = [],
   locale,
   weekStartsOn,
+  showWeekNumbers = false,
   focusedDate,
   rangeStart,
   hoveredDate,
@@ -200,6 +202,15 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
     >
       <thead>
         <tr role="row">
+          {showWeekNumbers && (
+            <th
+              className={`${styles.weekday} ${styles.weekNumberHeader}`}
+              role="columnheader"
+              scope="col"
+            >
+              #
+            </th>
+          )}
           {headers.map((day) => (
             <th
               key={day}
@@ -213,40 +224,53 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
         </tr>
       </thead>
       <tbody>
-        {weeks.map((week, rowIdx) => (
-          <tr key={rowIdx} role="row">
-            {week.map((date, colIdx) => {
-              const rangeFlags = getRangeFlags(date);
-              return (
-                <CalendarDayCell
-                  key={colIdx}
-                  date={date}
-                  isCurrentMonth={sameMonth(
-                    date,
-                    viewDate.getMonth(),
-                    viewDate.getFullYear(),
-                  )}
-                  isToday={isSameDay(date, today)}
-                  isSelected={isSelected(date)}
-                  isDisabled={
-                    !isDateInRange(date, minDate, maxDate) ||
-                    isDateDisabled(date, disabledDates)
-                  }
-                  isFocusTarget={isSameDay(date, focusedDate)}
-                  isRangeStart={rangeFlags.isRangeStart}
-                  isRangeEnd={rangeFlags.isRangeEnd}
-                  isInRange={rangeFlags.isInRange}
-                  isInPreview={rangeFlags.isInPreview}
-                  isPreviewStart={rangeFlags.isPreviewStart}
-                  isPreviewEnd={rangeFlags.isPreviewEnd}
-                  onSelect={onSelectDate}
-                  onHover={onHoverDate}
-                  locale={locale}
-                />
-              );
-            })}
-          </tr>
-        ))}
+        {weeks.map((week, rowIdx) => {
+          const weekNumber = getISOWeekNumber(week[0]);
+          return (
+            <tr key={rowIdx} role="row">
+              {showWeekNumbers && (
+                <td
+                  className={styles.weekNumber}
+                  role="rowheader"
+                  aria-label={`Week ${weekNumber}`}
+                  tabIndex={-1}
+                >
+                  {weekNumber}
+                </td>
+              )}
+              {week.map((date, colIdx) => {
+                const rangeFlags = getRangeFlags(date);
+                return (
+                  <CalendarDayCell
+                    key={colIdx}
+                    date={date}
+                    isCurrentMonth={sameMonth(
+                      date,
+                      viewDate.getMonth(),
+                      viewDate.getFullYear(),
+                    )}
+                    isToday={isSameDay(date, today)}
+                    isSelected={isSelected(date)}
+                    isDisabled={
+                      !isDateInRange(date, minDate, maxDate) ||
+                      isDateDisabled(date, disabledDates)
+                    }
+                    isFocusTarget={isSameDay(date, focusedDate)}
+                    isRangeStart={rangeFlags.isRangeStart}
+                    isRangeEnd={rangeFlags.isRangeEnd}
+                    isInRange={rangeFlags.isInRange}
+                    isInPreview={rangeFlags.isInPreview}
+                    isPreviewStart={rangeFlags.isPreviewStart}
+                    isPreviewEnd={rangeFlags.isPreviewEnd}
+                    onSelect={onSelectDate}
+                    onHover={onHoverDate}
+                    locale={locale}
+                  />
+                );
+              })}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

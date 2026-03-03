@@ -5,6 +5,7 @@ import {
   isDateDisabled,
   isDateRange,
   isDateBetween,
+  getISOWeekNumber,
   formatMonthYear,
   formatDayLabel,
 } from './dates';
@@ -186,6 +187,50 @@ describe('isDateBetween', () => {
         new Date(2026, 0, 1),
       ),
     ).toBe(true);
+  });
+});
+
+describe('getISOWeekNumber', () => {
+  it('returns week 1 for January 1, 2026 (Thursday)', () => {
+    // Jan 1 2026 is a Thursday → ISO week 1
+    expect(getISOWeekNumber(new Date(2026, 0, 1))).toBe(1);
+  });
+
+  it('returns week 53 for December 31, 2026 (Thursday)', () => {
+    // Dec 31 2026 is a Thursday → ISO week 53
+    expect(getISOWeekNumber(new Date(2026, 11, 31))).toBe(53);
+  });
+
+  it('returns week 1 for a date in late December that belongs to next year week 1', () => {
+    // Dec 31, 2018 is a Monday → ISO week 1 of 2019
+    expect(getISOWeekNumber(new Date(2018, 11, 31))).toBe(1);
+  });
+
+  it('returns correct week for a mid-year date', () => {
+    // June 15, 2026 is a Monday → ISO week 25
+    expect(getISOWeekNumber(new Date(2026, 5, 15))).toBe(25);
+  });
+
+  it('handles leap year correctly', () => {
+    // Feb 29, 2024 (leap day, Thursday) → ISO week 9
+    expect(getISOWeekNumber(new Date(2024, 1, 29))).toBe(9);
+  });
+
+  it('returns week 52 for Dec 28 in most years', () => {
+    // Dec 28, 2025 is a Sunday → ISO week 52 of 2025
+    expect(getISOWeekNumber(new Date(2025, 11, 28))).toBe(52);
+  });
+
+  it('returns week 1 for Jan 4 (always in ISO week 1)', () => {
+    // Jan 4 is always in ISO week 1
+    expect(getISOWeekNumber(new Date(2026, 0, 4))).toBe(1);
+    expect(getISOWeekNumber(new Date(2025, 0, 4))).toBe(1);
+    expect(getISOWeekNumber(new Date(2024, 0, 4))).toBe(1);
+  });
+
+  it('handles Dec 29 that falls in week 1 of the next year', () => {
+    // Dec 29, 2014 is a Monday → ISO week 1 of 2015
+    expect(getISOWeekNumber(new Date(2014, 11, 29))).toBe(1);
   });
 });
 

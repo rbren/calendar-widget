@@ -14,3 +14,19 @@
   color: var(--cw-color-text-muted);
   padding: 0;
 }
+
+.weekNumberHeader {
+  width: var(--cw-cell-size);
+}
+
+.weekNumber {
+  width: var(--cw-cell-size);
+  height: var(--cw-cell-size);
+  text-align: center;
+  vertical-align: middle;
+  font-size: 0.8em;
+  color: var(--cw-color-text-muted);
+  padding: 0;
+  cursor: default;
+  user-select: none;
+}

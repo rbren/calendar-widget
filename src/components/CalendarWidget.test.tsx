@@ -575,4 +575,20 @@ describe('CalendarWidget quick navigation', () => {
       screen.queryByRole('button', { name: /choose/i }),
     ).not.toBeInTheDocument();
   });
+
+  describe('week numbers', () => {
+    it('does not render week numbers by default', () => {
+      render(<CalendarWidget value={new Date(2026, 0, 1)} />);
+      expect(screen.queryAllByRole('rowheader')).toHaveLength(0);
+    });
+
+    it('renders week numbers when showWeekNumbers is true', () => {
+      render(<CalendarWidget value={new Date(2026, 0, 1)} showWeekNumbers />);
+      const rowHeaders = screen.getAllByRole('rowheader');
+      expect(rowHeaders).toHaveLength(6);
+      // First row starts Dec 28, 2025 (ISO week 52); second row is week 1
+      expect(rowHeaders[0]).toHaveAttribute('aria-label', 'Week 52');
+      expect(rowHeaders[1]).toHaveAttribute('aria-label', 'Week 1');
+    });
+  });
 });

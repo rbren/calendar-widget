@@ -29,6 +29,7 @@ export {
   isDateDisabled,
   isDateRange,
   isDateBetween,
+  getISOWeekNumber,
   formatMonthYear,
   formatDayLabel,
 } from './utils/dates';

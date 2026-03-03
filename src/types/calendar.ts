@@ -22,6 +22,8 @@ export interface CalendarWidgetProps {
   disabledDates?: Date[];
   /** Day the week starts on: 0 = Sunday, 1 = Monday (default: 0) */
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /** Display ISO week numbers in the first column (default: false) */
+  showWeekNumbers?: boolean;
   /** Set to false to disable the drill-up month/year picker (default: true) */
   quickNavigation?: boolean;
   /** Show a "Today" button for quick navigation to the current month (default: true) */
@@ -106,6 +108,8 @@ export interface CalendarGridProps {
   locale?: string;
   /** Day the week starts on */
   weekStartsOn: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  /** Display ISO week numbers in the first column (default: false) */
+  showWeekNumbers?: boolean;
   /** The date that currently holds the roving tabIndex */
   focusedDate: Date;
   /** The pending start date during range selection (before second click) */
