@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0047 — Node Engine Requirements and CI Matrix Mismatch
