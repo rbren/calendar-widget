@@ -36,9 +36,7 @@ describe('CalendarGrid', () => {
   });
 
   it('marks selected date', () => {
-    render(
-      <CalendarGrid {...defaultProps} value={new Date(2026, 3, 15)} />,
-    );
+    render(<CalendarGrid {...defaultProps} value={new Date(2026, 3, 15)} />);
     const cells = screen.getAllByRole('gridcell');
     const selectedCells = cells.filter(
       (c) => c.getAttribute('aria-selected') === 'true',
@@ -72,9 +70,9 @@ describe('CalendarGrid', () => {
   it('moves focus right on ArrowRight', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{ArrowRight}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -84,9 +82,9 @@ describe('CalendarGrid', () => {
   it('moves focus left on ArrowLeft', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{ArrowLeft}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -96,9 +94,9 @@ describe('CalendarGrid', () => {
   it('moves focus down on ArrowDown', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{ArrowDown}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -108,9 +106,9 @@ describe('CalendarGrid', () => {
   it('moves focus up on ArrowUp', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{ArrowUp}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -121,9 +119,9 @@ describe('CalendarGrid', () => {
     const onFocusDate = vi.fn();
     // April 15 2026 is a Wednesday, weekStartsOn=0 → first day of week is Sun Apr 12
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{Home}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -134,9 +132,9 @@ describe('CalendarGrid', () => {
     const onFocusDate = vi.fn();
     // April 15 2026 is a Wednesday, weekStartsOn=0 → last day of week is Sat Apr 18
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{End}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -146,9 +144,9 @@ describe('CalendarGrid', () => {
   it('moves focus to next month on PageDown', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{PageDown}');
     expect(onFocusDate).toHaveBeenCalledOnce();
@@ -160,9 +158,9 @@ describe('CalendarGrid', () => {
   it('moves focus to previous month on PageUp', async () => {
     const onFocusDate = vi.fn();
     render(<CalendarGrid {...defaultProps} onFocusDate={onFocusDate} />);
-    const cell = screen.getAllByRole('gridcell').find(
-      (c) => c.getAttribute('tabindex') === '0',
-    )!;
+    const cell = screen
+      .getAllByRole('gridcell')
+      .find((c) => c.getAttribute('tabindex') === '0')!;
     cell.focus();
     await userEvent.keyboard('{PageUp}');
     expect(onFocusDate).toHaveBeenCalledOnce();

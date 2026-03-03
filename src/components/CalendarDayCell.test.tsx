@@ -47,12 +47,18 @@ describe('CalendarDayCell', () => {
 
   it('has aria-selected when selected', () => {
     renderCell({ isSelected: true });
-    expect(screen.getByRole('gridcell')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('gridcell')).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
   });
 
   it('has aria-disabled when disabled', () => {
     renderCell({ isDisabled: true });
-    expect(screen.getByRole('gridcell')).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getByRole('gridcell')).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('applies today class', () => {
@@ -67,7 +73,10 @@ describe('CalendarDayCell', () => {
 
   it('sets aria-current="date" on today', () => {
     renderCell({ isToday: true });
-    expect(screen.getByRole('gridcell')).toHaveAttribute('aria-current', 'date');
+    expect(screen.getByRole('gridcell')).toHaveAttribute(
+      'aria-current',
+      'date',
+    );
   });
 
   it('does not set aria-current when not today', () => {

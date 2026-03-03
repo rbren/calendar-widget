@@ -68,9 +68,8 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   // Move DOM focus to the focused date cell after render
   useEffect(() => {
     if (!tableRef.current) return;
-    const cell = tableRef.current.querySelector<HTMLElement>(
-      'td[tabindex="0"]',
-    );
+    const cell =
+      tableRef.current.querySelector<HTMLElement>('td[tabindex="0"]');
     if (cell && tableRef.current.contains(document.activeElement)) {
       cell.focus();
     }
