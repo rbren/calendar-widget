@@ -1,9 +1,15 @@
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
   padding: 4px 0;
   margin-bottom: 4px;
+}
+
+.navRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .navBtn {
@@ -57,4 +63,40 @@
 .labelBtn:focus-visible {
   outline: 2px solid var(--cw-color-primary);
   outline-offset: -2px;
+}
+
+.todayRow {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.todayBtn {
+  background: transparent;
+  border: none;
+  padding: 2px 8px;
+  border-radius: var(--cw-border-radius);
+  color: var(--cw-color-primary);
+  font-size: 0.85em;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.todayBtn:hover {
+  background: var(--cw-color-hover);
+}
+
+.todayBtn:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.todayBtn[aria-disabled='true'] {
+  color: var(--cw-color-text-muted);
+  cursor: default;
+}
+
+.todayBtn[aria-disabled='true']:hover {
+  background: transparent;
 }

@@ -16,6 +16,8 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     disabledDates,
     weekStartsOn = 0,
     quickNavigation = true,
+    showTodayButton = true,
+    todayButtonLabel = 'Today',
     className,
     value,
   } = props;
@@ -42,6 +44,8 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     goToNextYear,
     goToPrevYearRange,
     goToNextYearRange,
+    goToToday,
+    isCurrentMonth,
     headingAriaLabel,
   } = useCalendarState(props);
 
@@ -85,6 +89,10 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
         quickNavigation={canDrillUp}
         onDrillUp={canDrillUp ? drillUp : undefined}
         headingAriaLabel={headingAriaLabel}
+        showTodayButton={showTodayButton}
+        todayButtonLabel={todayButtonLabel}
+        isCurrentMonth={isCurrentMonth}
+        onGoToToday={goToToday}
       />
       {activeView === 'days' && (
         <CalendarGrid

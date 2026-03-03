@@ -257,6 +257,98 @@ describe('CalendarWidget range mode', () => {
   });
 });
 
+describe('CalendarWidget Today button', () => {
+  it('renders the Today button by default', () => {
+    render(<CalendarWidget value={new Date(2026, 3, 15)} locale="en-US" />);
+    expect(screen.getByText('Today')).toBeInTheDocument();
+  });
+
+  it('navigates to the current month when clicked from a distant month', async () => {
+    const now = new Date();
+    const distantDate = new Date(2020, 0, 15);
+    render(<CalendarWidget value={distantDate} locale="en-US" />);
+
+    // Should be showing January 2020
+    expect(screen.getByText('January 2020')).toBeInTheDocument();
+
+    // Click Today
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+
+    // Should now show the current month
+    const expectedLabel = new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      year: 'numeric',
+    }).format(now);
+    expect(screen.getByText(expectedLabel)).toBeInTheDocument();
+  });
+
+  it('does not select today when clicking Today button', async () => {
+    const onChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2020, 0, 15)}
+        onChange={onChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it('disables the Today button when already on the current month', () => {
+    const now = new Date();
+    render(<CalendarWidget value={now} locale="en-US" />);
+    const btn = screen.getByRole('button', {
+      name: 'Navigate to current month',
+    });
+    expect(btn).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('hides the Today button when showTodayButton={false}', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        showTodayButton={false}
+        locale="en-US"
+      />,
+    );
+    expect(screen.queryByText('Today')).not.toBeInTheDocument();
+  });
+
+  it('renders a custom todayButtonLabel', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 3, 15)}
+        todayButtonLabel="Aujourd'hui"
+        locale="en-US"
+      />,
+    );
+    expect(screen.getByText("Aujourd'hui")).toBeInTheDocument();
+  });
+
+  it('returns to day view when clicked from month/year picker', async () => {
+    render(<CalendarWidget value={new Date(2020, 0, 15)} locale="en-US" />);
+
+    // Open month picker
+    await userEvent.click(
+      screen.getByRole('button', { name: /choose month and year/i }),
+    );
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
+
+    // Click Today - should go back to day view at current month
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+    expect(screen.getByRole('grid', { name: 'Calendar' })).toBeInTheDocument();
+  });
+});
+
 describe('CalendarWidget quick navigation', () => {
   it('renders heading as a button by default (quickNavigation=true)', () => {
     render(<CalendarWidget value={new Date(2026, 2, 15)} locale="en-US" />);

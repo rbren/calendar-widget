@@ -24,6 +24,10 @@ export interface CalendarWidgetProps {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
   /** Set to false to disable the drill-up month/year picker (default: true) */
   quickNavigation?: boolean;
+  /** Show a "Today" button for quick navigation to the current month (default: true) */
+  showTodayButton?: boolean;
+  /** Custom label for the today button (default: "Today"). Useful for i18n. */
+  todayButtonLabel?: string;
   /** Additional CSS class for the root element */
   className?: string;
 }
@@ -45,6 +49,14 @@ export interface CalendarHeaderProps {
   onDrillUp?: () => void;
   /** Accessible label for the heading button */
   headingAriaLabel?: string;
+  /** Whether to show the Today button */
+  showTodayButton?: boolean;
+  /** Label for the Today button */
+  todayButtonLabel?: string;
+  /** Whether the view is already showing the current month */
+  isCurrentMonth?: boolean;
+  /** Called when the Today button is clicked */
+  onGoToToday?: () => void;
 }
 
 export interface MonthPickerProps {

@@ -9,40 +9,59 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   quickNavigation,
   onDrillUp,
   headingAriaLabel,
+  showTodayButton = true,
+  todayButtonLabel = 'Today',
+  isCurrentMonth = false,
+  onGoToToday,
 }) => {
   return (
     <div className={styles.header}>
-      <button
-        type="button"
-        className={styles.navBtn}
-        aria-label="Previous month"
-        onClick={onPrevMonth}
-      >
-        ‹
-      </button>
-      {quickNavigation && onDrillUp ? (
+      <div className={styles.navRow}>
         <button
           type="button"
-          className={styles.labelBtn}
-          aria-label={headingAriaLabel}
-          aria-live="polite"
-          onClick={onDrillUp}
+          className={styles.navBtn}
+          aria-label="Previous month"
+          onClick={onPrevMonth}
         >
-          {monthYearLabel}
+          ‹
         </button>
-      ) : (
-        <span className={styles.label} aria-live="polite">
-          {monthYearLabel}
-        </span>
+        {quickNavigation && onDrillUp ? (
+          <button
+            type="button"
+            className={styles.labelBtn}
+            aria-label={headingAriaLabel}
+            aria-live="polite"
+            onClick={onDrillUp}
+          >
+            {monthYearLabel}
+          </button>
+        ) : (
+          <span className={styles.label} aria-live="polite">
+            {monthYearLabel}
+          </span>
+        )}
+        <button
+          type="button"
+          className={styles.navBtn}
+          aria-label="Next month"
+          onClick={onNextMonth}
+        >
+          ›
+        </button>
+      </div>
+      {showTodayButton && onGoToToday && (
+        <div className={styles.todayRow}>
+          <button
+            type="button"
+            className={styles.todayBtn}
+            aria-label="Navigate to current month"
+            aria-disabled={isCurrentMonth || undefined}
+            onClick={isCurrentMonth ? undefined : onGoToToday}
+          >
+            {todayButtonLabel}
+          </button>
+        </div>
       )}
-      <button
-        type="button"
-        className={styles.navBtn}
-        aria-label="Next month"
-        onClick={onNextMonth}
-      >
-        ›
-      </button>
     </div>
   );
 };

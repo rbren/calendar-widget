@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: open
+state: review
 ---
 
 # 0014 — "Today" Button

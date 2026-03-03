@@ -35,3 +35,74 @@ describe('CalendarHeader', () => {
     expect(label).toHaveAttribute('aria-live', 'polite');
   });
 });
+
+describe('CalendarHeader Today button', () => {
+  const baseProps = {
+    viewDate: new Date(2026, 3, 1),
+    monthYearLabel: 'April 2026',
+    onPrevMonth: vi.fn(),
+    onNextMonth: vi.fn(),
+    onGoToToday: vi.fn(),
+  };
+
+  it('renders the Today button by default when onGoToToday is provided', () => {
+    render(<CalendarHeader {...baseProps} />);
+    expect(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    ).toBeInTheDocument();
+    expect(screen.getByText('Today')).toBeInTheDocument();
+  });
+
+  it('does not render the Today button when showTodayButton is false', () => {
+    render(<CalendarHeader {...baseProps} showTodayButton={false} />);
+    expect(screen.queryByText('Today')).not.toBeInTheDocument();
+  });
+
+  it('renders a custom label via todayButtonLabel', () => {
+    render(<CalendarHeader {...baseProps} todayButtonLabel="Aujourd'hui" />);
+    expect(screen.getByText("Aujourd'hui")).toBeInTheDocument();
+  });
+
+  it('calls onGoToToday when clicked', async () => {
+    const onGoToToday = vi.fn();
+    render(<CalendarHeader {...baseProps} onGoToToday={onGoToToday} />);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+    expect(onGoToToday).toHaveBeenCalledOnce();
+  });
+
+  it('has aria-disabled="true" when isCurrentMonth is true', () => {
+    render(<CalendarHeader {...baseProps} isCurrentMonth={true} />);
+    const btn = screen.getByRole('button', {
+      name: 'Navigate to current month',
+    });
+    expect(btn).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('does not call onGoToToday when disabled (isCurrentMonth=true)', async () => {
+    const onGoToToday = vi.fn();
+    render(
+      <CalendarHeader
+        {...baseProps}
+        onGoToToday={onGoToToday}
+        isCurrentMonth={true}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+    expect(onGoToToday).not.toHaveBeenCalled();
+  });
+
+  it('is keyboard accessible via Tab and Enter', async () => {
+    const onGoToToday = vi.fn();
+    render(<CalendarHeader {...baseProps} onGoToToday={onGoToToday} />);
+    const btn = screen.getByRole('button', {
+      name: 'Navigate to current month',
+    });
+    btn.focus();
+    await userEvent.keyboard('{Enter}');
+    expect(onGoToToday).toHaveBeenCalledOnce();
+  });
+});

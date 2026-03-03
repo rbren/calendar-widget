@@ -92,6 +92,18 @@ export function useCalendarState(props: CalendarWidgetProps) {
     }
   }
 
+  const today = new Date();
+  const isCurrentMonth =
+    viewDate.getFullYear() === today.getFullYear() &&
+    viewDate.getMonth() === today.getMonth();
+
+  const goToToday = useCallback(() => {
+    const now = new Date();
+    setViewDate(new Date(now.getFullYear(), now.getMonth(), 1));
+    setFocusedDate(now);
+    setActiveView('days');
+  }, []);
+
   const goToPrevMonth = useCallback(() => {
     setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
   }, []);
@@ -245,6 +257,8 @@ export function useCalendarState(props: CalendarWidgetProps) {
     monthYearLabel,
     goToPrevMonth,
     goToNextMonth,
+    goToToday,
+    isCurrentMonth,
     selectDate,
     focusDate,
     hoverDate,

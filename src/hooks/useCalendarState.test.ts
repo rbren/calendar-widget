@@ -207,4 +207,46 @@ describe('useCalendarState', () => {
     // Same month — viewDate reference should be identical (no re-render churn)
     expect(result.current.viewDate).toBe(prevViewDate);
   });
+
+  it('goToToday navigates to the current month', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2020, 0, 15) }),
+    );
+    expect(result.current.viewDate.getFullYear()).toBe(2020);
+    expect(result.current.viewDate.getMonth()).toBe(0);
+
+    act(() => result.current.goToToday());
+
+    const now = new Date();
+    expect(result.current.viewDate.getFullYear()).toBe(now.getFullYear());
+    expect(result.current.viewDate.getMonth()).toBe(now.getMonth());
+  });
+
+  it('isCurrentMonth is true when viewing the current month', () => {
+    const now = new Date();
+    const { result } = renderHook(() => useCalendarState({ value: now }));
+    expect(result.current.isCurrentMonth).toBe(true);
+  });
+
+  it('isCurrentMonth is false when viewing a different month', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({ value: new Date(2020, 0, 15) }),
+    );
+    expect(result.current.isCurrentMonth).toBe(false);
+  });
+
+  it('goToToday resets activeView to days', () => {
+    const { result } = renderHook(() =>
+      useCalendarState({
+        value: new Date(2020, 0, 15),
+        quickNavigation: true,
+      }),
+    );
+
+    act(() => result.current.drillUp());
+    expect(result.current.activeView).toBe('months');
+
+    act(() => result.current.goToToday());
+    expect(result.current.activeView).toBe('days');
+  });
 });
