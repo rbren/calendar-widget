@@ -147,6 +147,8 @@ export interface CalendarGridProps {
   rangeStart?: Date | null;
   /** The hovered date during range selection preview */
   hoveredDate?: Date | null;
+  /** Selection predicate: returns true if the given date should appear selected */
+  isSelected: (date: Date) => boolean;
   /** Called when a day is clicked */
   onSelectDate: (date: Date) => void;
   /** Called when keyboard navigation changes the focused date */

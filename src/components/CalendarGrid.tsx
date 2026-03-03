@@ -30,6 +30,7 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   focusedDate,
   rangeStart,
   hoveredDate,
+  isSelected,
   onSelectDate,
   onFocusDate,
   onHoverDate,
@@ -38,19 +39,6 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
   const tableRef = useRef<HTMLTableElement>(null);
   const today = new Date();
   const headers = getWeekdayHeaders(weekStartsOn, locale);
-
-  const isSelected = (date: Date): boolean => {
-    if (mode === 'range' && rangeStart && !isDateRange(value)) {
-      return isSameDay(date, rangeStart);
-    }
-    if (!value) return false;
-    if (value instanceof Date) return isSameDay(date, value);
-    if (isDateRange(value)) {
-      return isSameDay(date, value.start) || isSameDay(date, value.end);
-    }
-    if (Array.isArray(value)) return value.some((v) => isSameDay(date, v));
-    return false;
-  };
 
   const getRangeFlags = (date: Date) => {
     let isRangeStart = false;

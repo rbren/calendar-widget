@@ -34,6 +34,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     selectDate,
     focusDate,
     hoverDate,
+    isSelected,
     rangeStart,
     hoveredDate,
     activeView,
@@ -112,6 +113,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
           focusedDate={focusedDate}
           rangeStart={rangeStart}
           hoveredDate={hoveredDate}
+          isSelected={isSelected}
           onSelectDate={selectDate}
           onFocusDate={focusDate}
           onHoverDate={hoverDate}

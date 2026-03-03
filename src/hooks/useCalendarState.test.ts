@@ -109,6 +109,17 @@ describe('useCalendarState', () => {
     expect(result.current.isSelected(new Date(2026, 3, 11))).toBe(false);
   });
 
+  it('isSelected returns true for pending range start before second click', () => {
+    const onChange = vi.fn();
+    const { result } = renderHook(() =>
+      useCalendarState({ mode: 'range', onChange }),
+    );
+    // First click sets rangeStart
+    act(() => result.current.selectDate(new Date(2026, 3, 10)));
+    expect(result.current.isSelected(new Date(2026, 3, 10))).toBe(true);
+    expect(result.current.isSelected(new Date(2026, 3, 11))).toBe(false);
+  });
+
   it('isSelected returns true for dates in array value', () => {
     const { result } = renderHook(() =>
       useCalendarState({

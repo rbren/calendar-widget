@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0077 — `isSelected` Logic Duplicated Between useCalendarState and CalendarGrid

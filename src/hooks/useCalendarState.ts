@@ -216,6 +216,9 @@ export function useCalendarState(props: CalendarWidgetProps) {
 
   const isSelected = useCallback(
     (date: Date): boolean => {
+      if (mode === 'range' && rangeStart && !isDateRange(value)) {
+        return isSameDay(date, rangeStart);
+      }
       if (!value) return false;
       if (value instanceof Date) return isSameDay(date, value);
       if (isDateRange(value)) {
@@ -224,7 +227,7 @@ export function useCalendarState(props: CalendarWidgetProps) {
       if (Array.isArray(value)) return value.some((v) => isSameDay(date, v));
       return false;
     },
-    [value],
+    [mode, value, rangeStart],
   );
 
   // --- Quick navigation (drill-up) ---

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CalendarGrid } from './CalendarGrid';
-import { getCalendarDays } from '../utils/dates';
+import { getCalendarDays, isSameDay } from '../utils/dates';
 
 describe('CalendarGrid', () => {
   const weeks = getCalendarDays(2026, 3); // April 2026
@@ -10,6 +10,7 @@ describe('CalendarGrid', () => {
     viewDate: new Date(2026, 3, 1),
     weekStartsOn: 0 as const,
     focusedDate: new Date(2026, 3, 15),
+    isSelected: () => false,
     onSelectDate: vi.fn(),
     onFocusDate: vi.fn(),
   };
@@ -36,7 +37,14 @@ describe('CalendarGrid', () => {
   });
 
   it('marks selected date', () => {
-    render(<CalendarGrid {...defaultProps} value={new Date(2026, 3, 15)} />);
+    const selected = new Date(2026, 3, 15);
+    render(
+      <CalendarGrid
+        {...defaultProps}
+        value={selected}
+        isSelected={(d) => isSameDay(d, selected)}
+      />,
+    );
     const cells = screen.getAllByRole('gridcell');
     const selectedCells = cells.filter(
       (c) => c.getAttribute('aria-selected') === 'true',
