@@ -1,6 +1,6 @@
 ---
 tag: architecture
-state: open
+state: review
 ---
 
 # 0002 — Linting & Formatting
