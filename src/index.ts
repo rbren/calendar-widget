@@ -8,6 +8,7 @@ export { YearPicker } from './components/YearPicker';
 
 // Hooks
 export { useCalendarState } from './hooks/useCalendarState';
+export type { MonthData } from './hooks/useCalendarState';
 
 // Types
 export type {
@@ -33,4 +34,5 @@ export {
   getISOWeekNumber,
   formatMonthYear,
   formatDayLabel,
+  addMonths,
 } from './utils/dates';

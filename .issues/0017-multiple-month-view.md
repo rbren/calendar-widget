@@ -1,6 +1,6 @@
 ---
 tag: pm
-state: open
+state: review
 ---
 
 # 0017 — Multiple Month View

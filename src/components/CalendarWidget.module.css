@@ -14,6 +14,7 @@
   --cw-color-range-preview-bg: rgba(219, 234, 254, 0.5);
   --cw-border-radius: 6px;
   --cw-cell-size: 36px;
+  --cw-month-gap: 16px;
 
   font-family: var(--cw-font-family);
   font-size: var(--cw-font-size);
@@ -22,4 +23,134 @@
   display: inline-block;
   box-sizing: border-box;
   max-width: 100%;
+}
+
+/* Multi-month layout */
+.monthsContainer {
+  display: flex;
+  gap: var(--cw-month-gap);
+  flex-wrap: wrap;
+}
+
+.monthPanel {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.monthPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  margin-bottom: 4px;
+}
+
+.monthNavBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--cw-cell-size);
+  height: var(--cw-cell-size);
+  padding: 0;
+  border: none;
+  border-radius: var(--cw-border-radius);
+  background: transparent;
+  color: var(--cw-color-text);
+  font-size: 1.25em;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.monthNavBtn:hover {
+  background: var(--cw-color-hover);
+}
+
+.monthNavBtn:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.monthNavSpacer {
+  display: inline-block;
+  width: var(--cw-cell-size);
+  height: var(--cw-cell-size);
+}
+
+.monthLabel {
+  font-weight: 600;
+  user-select: none;
+  text-align: center;
+}
+
+.monthLabelBtn {
+  font-weight: 600;
+  user-select: none;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  border-radius: var(--cw-border-radius);
+  color: var(--cw-color-text);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.monthLabelBtn:hover {
+  background: var(--cw-color-hover);
+}
+
+.monthLabelBtn:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.todayRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.todayBtn {
+  background: transparent;
+  border: none;
+  padding: 2px 8px;
+  border-radius: var(--cw-border-radius);
+  color: var(--cw-color-primary);
+  font-size: 0.85em;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.todayBtn:hover {
+  background: var(--cw-color-hover);
+}
+
+.todayBtn:focus-visible {
+  outline: 2px solid var(--cw-color-primary);
+  outline-offset: -2px;
+}
+
+.todayBtn[aria-disabled='true'] {
+  color: var(--cw-color-text-muted);
+  cursor: default;
+}
+
+.todayBtn[aria-disabled='true']:hover {
+  background: transparent;
+}
+
+/* Responsive: stack months vertically at narrow widths */
+@container (max-width: 560px) {
+  .monthsContainer {
+    flex-direction: column;
+  }
+}
+
+/* Fallback for browsers without container queries */
+@media (max-width: 560px) {
+  .monthsContainer {
+    flex-direction: column;
+  }
 }

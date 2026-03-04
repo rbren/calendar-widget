@@ -145,6 +145,11 @@ export function sameMonth(date: Date, month: number, year: number): boolean {
   return date.getMonth() === month && date.getFullYear() === year;
 }
 
+/** Returns a new Date representing the first day of the month that is `offset` months from the given date. */
+export function addMonths(date: Date, offset: number): Date {
+  return new Date(date.getFullYear(), date.getMonth() + offset, 1);
+}
+
 /** Builds a full accessible label for a day cell (e.g. "Saturday, March 15, 2026 (today, selected)"). */
 export function formatDayLabel(
   date: Date,

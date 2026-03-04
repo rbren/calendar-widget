@@ -9,6 +9,7 @@ import {
   formatMonthYear,
   formatDayLabel,
   addDays,
+  addMonths,
   getFirstDayOfWeek,
   getLastDayOfWeek,
   sameMonth,
@@ -520,5 +521,31 @@ describe('getWeekdayHeaders', () => {
       expect(headers).toHaveLength(7);
       expect(new Set(headers).size).toBe(7);
     }
+  });
+});
+
+describe('addMonths', () => {
+  it('adds months forward', () => {
+    const result = addMonths(new Date(2026, 2, 15), 1);
+    expect(result.getFullYear()).toBe(2026);
+    expect(result.getMonth()).toBe(3);
+    expect(result.getDate()).toBe(1);
+  });
+
+  it('wraps year boundary when adding months', () => {
+    const result = addMonths(new Date(2026, 11, 15), 2);
+    expect(result.getFullYear()).toBe(2027);
+    expect(result.getMonth()).toBe(1);
+  });
+
+  it('subtracts months with negative offset', () => {
+    const result = addMonths(new Date(2026, 2, 15), -1);
+    expect(result.getFullYear()).toBe(2026);
+    expect(result.getMonth()).toBe(1);
+  });
+
+  it('returns first of month', () => {
+    const result = addMonths(new Date(2026, 5, 20), 0);
+    expect(result.getDate()).toBe(1);
   });
 });

@@ -20,15 +20,19 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
     showTodayButton = true,
     todayButtonLabel = 'Today',
     renderDay,
+    numberOfMonths: rawNumberOfMonths = 1,
     className,
     value,
   } = props;
+
+  const numberOfMonths = Math.max(1, Math.floor(rawNumberOfMonths));
 
   const {
     viewDate,
     focusedDate,
     weeks,
     monthYearLabel,
+    months,
     goToPrevMonth,
     goToNextMonth,
     selectDate,
@@ -82,42 +86,166 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = (props) => {
   // Only allow drill-up from days and months views
   const canDrillUp = quickNavigation && activeView !== 'years';
 
+  const isSingleMonth = numberOfMonths === 1;
+
   return (
     <div className={rootClassName}>
-      <CalendarHeader
-        viewDate={viewDate}
-        monthYearLabel={headerLabel}
-        onPrevMonth={handlePrev}
-        onNextMonth={handleNext}
-        activeView={activeView}
-        quickNavigation={canDrillUp}
-        onDrillUp={canDrillUp ? drillUp : undefined}
-        headingAriaLabel={headingAriaLabel}
-        showTodayButton={showTodayButton}
-        todayButtonLabel={todayButtonLabel}
-        isCurrentMonth={isCurrentMonth}
-        onGoToToday={goToToday}
-      />
-      {activeView === 'days' && (
-        <CalendarGrid
-          weeks={weeks}
+      {isSingleMonth ? (
+        <>
+          <CalendarHeader
+            viewDate={viewDate}
+            monthYearLabel={headerLabel}
+            onPrevMonth={handlePrev}
+            onNextMonth={handleNext}
+            activeView={activeView}
+            quickNavigation={canDrillUp}
+            onDrillUp={canDrillUp ? drillUp : undefined}
+            headingAriaLabel={headingAriaLabel}
+            showTodayButton={showTodayButton}
+            todayButtonLabel={todayButtonLabel}
+            isCurrentMonth={isCurrentMonth}
+            onGoToToday={goToToday}
+          />
+          {activeView === 'days' && (
+            <CalendarGrid
+              weeks={weeks}
+              viewDate={viewDate}
+              value={value}
+              mode={mode}
+              minDate={minDate}
+              maxDate={maxDate}
+              disabledDates={disabledDates}
+              locale={locale}
+              weekStartsOn={weekStartsOn}
+              showWeekNumbers={showWeekNumbers}
+              focusedDate={focusedDate}
+              rangeStart={rangeStart}
+              hoveredDate={hoveredDate}
+              isSelected={isSelected}
+              onSelectDate={selectDate}
+              onFocusDate={focusDate}
+              onHoverDate={hoverDate}
+              renderDay={renderDay}
+            />
+          )}
+        </>
+      ) : (
+        <>
+          {activeView === 'days' && (
+            <>
+              {showTodayButton && (
+                <div className={styles.todayRow}>
+                  <button
+                    type="button"
+                    className={styles.todayBtn}
+                    aria-label="Navigate to current month"
+                    aria-disabled={isCurrentMonth || undefined}
+                    onClick={isCurrentMonth ? undefined : goToToday}
+                  >
+                    {todayButtonLabel}
+                  </button>
+                </div>
+              )}
+              <div className={styles.monthsContainer}>
+                {months.map((monthData, i) => {
+                  const isFirst = i === 0;
+                  const isLast = i === numberOfMonths - 1;
+                  return (
+                    <div key={i} className={styles.monthPanel}>
+                      <div className={styles.monthPanelHeader}>
+                        {isFirst ? (
+                          <button
+                            type="button"
+                            className={styles.monthNavBtn}
+                            aria-label="Previous month"
+                            onClick={goToPrevMonth}
+                          >
+                            ‹
+                          </button>
+                        ) : (
+                          <span className={styles.monthNavSpacer} />
+                        )}
+                        {isFirst && canDrillUp ? (
+                          <button
+                            type="button"
+                            className={styles.monthLabelBtn}
+                            aria-label={headingAriaLabel}
+                            aria-live="polite"
+                            onClick={drillUp}
+                          >
+                            {monthData.monthYearLabel}
+                          </button>
+                        ) : (
+                          <span
+                            className={styles.monthLabel}
+                            aria-live={isFirst ? 'polite' : undefined}
+                          >
+                            {monthData.monthYearLabel}
+                          </span>
+                        )}
+                        {isLast ? (
+                          <button
+                            type="button"
+                            className={styles.monthNavBtn}
+                            aria-label="Next month"
+                            onClick={goToNextMonth}
+                          >
+                            ›
+                          </button>
+                        ) : (
+                          <span className={styles.monthNavSpacer} />
+                        )}
+                      </div>
+                      <CalendarGrid
+                        weeks={monthData.weeks}
+                        viewDate={monthData.viewDate}
+                        value={value}
+                        mode={mode}
+                        minDate={minDate}
+                        maxDate={maxDate}
+                        disabledDates={disabledDates}
+                        locale={locale}
+                        weekStartsOn={weekStartsOn}
+                        showWeekNumbers={showWeekNumbers}
+                        focusedDate={focusedDate}
+                        rangeStart={rangeStart}
+                        hoveredDate={hoveredDate}
+                        isSelected={isSelected}
+                        onSelectDate={selectDate}
+                        onFocusDate={focusDate}
+                        onHoverDate={hoverDate}
+                        renderDay={renderDay}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </>
+      )}
+      {!isSingleMonth && activeView === 'months' && (
+        <CalendarHeader
           viewDate={viewDate}
-          value={value}
-          mode={mode}
-          minDate={minDate}
-          maxDate={maxDate}
-          disabledDates={disabledDates}
-          locale={locale}
-          weekStartsOn={weekStartsOn}
-          showWeekNumbers={showWeekNumbers}
-          focusedDate={focusedDate}
-          rangeStart={rangeStart}
-          hoveredDate={hoveredDate}
-          isSelected={isSelected}
-          onSelectDate={selectDate}
-          onFocusDate={focusDate}
-          onHoverDate={hoverDate}
-          renderDay={renderDay}
+          monthYearLabel={String(viewDate.getFullYear())}
+          onPrevMonth={goToPrevYear}
+          onNextMonth={goToNextYear}
+          activeView={activeView}
+          quickNavigation={canDrillUp}
+          onDrillUp={canDrillUp ? drillUp : undefined}
+          headingAriaLabel={headingAriaLabel}
+          showTodayButton={false}
+        />
+      )}
+      {!isSingleMonth && activeView === 'years' && (
+        <CalendarHeader
+          viewDate={viewDate}
+          monthYearLabel={`${yearRangeStart}\u2013${yearRangeStart + 11}`}
+          onPrevMonth={goToPrevYearRange}
+          onNextMonth={goToNextYearRange}
+          activeView={activeView}
+          quickNavigation={false}
+          showTodayButton={false}
         />
       )}
       {activeView === 'months' && (

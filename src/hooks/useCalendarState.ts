@@ -6,8 +6,15 @@ import {
   isDateDisabled,
   isDateRange,
   formatMonthYear,
+  addMonths,
 } from '../utils/dates';
 import type { CalendarWidgetProps, CalendarView } from '../types/calendar';
+
+export interface MonthData {
+  viewDate: Date;
+  weeks: Date[][];
+  monthYearLabel: string;
+}
 
 export function useCalendarState(props: CalendarWidgetProps) {
   const {
@@ -22,7 +29,10 @@ export function useCalendarState(props: CalendarWidgetProps) {
     disabledDates = [],
     weekStartsOn = 0,
     quickNavigation = true,
+    numberOfMonths: rawNumberOfMonths = 1,
   } = props;
+
+  const numberOfMonths = Math.max(1, Math.floor(rawNumberOfMonths));
 
   const getInitialDate = (): Date => {
     if (value instanceof Date) return value;
@@ -180,6 +190,27 @@ export function useCalendarState(props: CalendarWidgetProps) {
     [viewDate, locale],
   );
 
+  const months: MonthData[] = useMemo(
+    () =>
+      Array.from({ length: numberOfMonths }, (_, i) => {
+        const monthViewDate = i === 0 ? viewDate : addMonths(viewDate, i);
+        return {
+          viewDate: monthViewDate,
+          weeks:
+            i === 0
+              ? weeks
+              : getCalendarDays(
+                  monthViewDate.getFullYear(),
+                  monthViewDate.getMonth(),
+                  weekStartsOn,
+                ),
+          monthYearLabel:
+            i === 0 ? monthYearLabel : formatMonthYear(monthViewDate, locale),
+        };
+      }),
+    [viewDate, weeks, monthYearLabel, numberOfMonths, weekStartsOn, locale],
+  );
+
   const selectDate = useCallback(
     (date: Date) => {
       if (!isDateInRange(date, minDate, maxDate)) return;
@@ -301,6 +332,7 @@ export function useCalendarState(props: CalendarWidgetProps) {
     focusedDate,
     weeks,
     monthYearLabel,
+    months,
     goToPrevMonth,
     goToNextMonth,
     goToToday,

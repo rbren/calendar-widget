@@ -892,3 +892,271 @@ describe('CalendarWidget onDayFocus', () => {
     expect((onDayFocus.mock.calls[2][0] as Date).getDate()).toBe(1);
   });
 });
+
+describe('CalendarWidget numberOfMonths', () => {
+  it('renders two consecutive months side by side with numberOfMonths={2}', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    expect(screen.getByText('March 2026')).toBeInTheDocument();
+    expect(screen.getByText('April 2026')).toBeInTheDocument();
+    // Two calendar grids
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(2);
+  });
+
+  it('renders three months with numberOfMonths={3}', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={3}
+        locale="en-US"
+      />,
+    );
+    expect(screen.getByText('March 2026')).toBeInTheDocument();
+    expect(screen.getByText('April 2026')).toBeInTheDocument();
+    expect(screen.getByText('May 2026')).toBeInTheDocument();
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(3);
+  });
+
+  it('clicking next shifts all months by one', async () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    expect(screen.getByText('March 2026')).toBeInTheDocument();
+    expect(screen.getByText('April 2026')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByLabelText('Next month'));
+    expect(screen.getByText('April 2026')).toBeInTheDocument();
+    expect(screen.getByText('May 2026')).toBeInTheDocument();
+    expect(screen.queryByText('March 2026')).not.toBeInTheDocument();
+  });
+
+  it('clicking prev shifts all months by one', async () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText('Previous month'));
+    expect(screen.getByText('February 2026')).toBeInTheDocument();
+    expect(screen.getByText('March 2026')).toBeInTheDocument();
+    expect(screen.queryByText('April 2026')).not.toBeInTheDocument();
+  });
+
+  it('numberOfMonths={1} behaves identically to default single-month', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={1}
+        locale="en-US"
+      />,
+    );
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(1);
+    expect(screen.getByText('March 2026')).toBeInTheDocument();
+  });
+
+  it('treats numberOfMonths <= 0 as 1', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={0}
+        locale="en-US"
+      />,
+    );
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(1);
+  });
+
+  it('treats negative numberOfMonths as 1', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={-2}
+        locale="en-US"
+      />,
+    );
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(1);
+  });
+
+  it('range selection across two visible months works', async () => {
+    const onChange = vi.fn();
+    render(
+      <CalendarWidget
+        mode="range"
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        onChange={onChange}
+        locale="en-US"
+      />,
+    );
+
+    // Click a day in March (left month)
+    const march20 = screen.getByLabelText(/March 20, 2026/);
+    await userEvent.click(march20);
+    expect(onChange).not.toHaveBeenCalled();
+
+    // Click a day in April (right month) — pick the non-outside-day cell
+    const april10 = screen
+      .getAllByLabelText(/April 10, 2026/)
+      .find((el) => !el.className.includes('outside'))!;
+    await userEvent.click(april10);
+    expect(onChange).toHaveBeenCalledOnce();
+
+    const result = onChange.mock.calls[0][0] as DateRange;
+    expect(result.start.getMonth()).toBe(2); // March
+    expect(result.start.getDate()).toBe(20);
+    expect(result.end.getMonth()).toBe(3); // April
+    expect(result.end.getDate()).toBe(10);
+  });
+
+  it('shows week numbers on each grid when showWeekNumbers is enabled', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        showWeekNumbers
+        locale="en-US"
+      />,
+    );
+    // Each grid has 6 rows, 2 grids = 12 rowheaders
+    const rowHeaders = screen.getAllByRole('rowheader');
+    expect(rowHeaders).toHaveLength(12);
+  });
+
+  it('quick navigation opens month picker from the first month heading', async () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    // Only the first month heading should be a clickable button for quick-nav
+    const quickNavBtn = screen.getByRole('button', {
+      name: /choose month and year/i,
+    });
+    expect(quickNavBtn).toHaveTextContent('March 2026');
+
+    await userEvent.click(quickNavBtn);
+    // Month picker should appear
+    expect(
+      screen.getByRole('grid', { name: /month picker/i }),
+    ).toBeInTheDocument();
+    // Day grids should be gone
+    expect(
+      screen.queryByRole('grid', { name: 'Calendar' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('selecting a month from picker shifts all months in multi-month view', async () => {
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    // Open month picker
+    await userEvent.click(
+      screen.getByRole('button', { name: /choose month and year/i }),
+    );
+    // Select June
+    await userEvent.click(screen.getByText('Jun'));
+
+    // Back to day view showing June + July
+    const grids = screen.getAllByRole('grid', { name: 'Calendar' });
+    expect(grids).toHaveLength(2);
+    expect(screen.getByText('June 2026')).toBeInTheDocument();
+    expect(screen.getByText('July 2026')).toBeInTheDocument();
+  });
+
+  it('Today button is rendered in multi-month view', () => {
+    render(
+      <CalendarWidget
+        value={new Date(2020, 0, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    ).toBeInTheDocument();
+  });
+
+  it('Today button navigates to current month in multi-month view', async () => {
+    const now = new Date();
+    render(
+      <CalendarWidget
+        value={new Date(2020, 0, 15)}
+        numberOfMonths={2}
+        locale="en-US"
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Navigate to current month' }),
+    );
+
+    const currentLabel = new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      year: 'numeric',
+    }).format(now);
+    expect(screen.getByText(currentLabel)).toBeInTheDocument();
+  });
+
+  it('fires onMonthChange when navigating in multi-month mode', async () => {
+    const onMonthChange = vi.fn();
+    render(
+      <CalendarWidget
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        onMonthChange={onMonthChange}
+        locale="en-US"
+      />,
+    );
+    await userEvent.click(screen.getByLabelText('Next month'));
+    expect(onMonthChange).toHaveBeenCalledOnce();
+    const arg = onMonthChange.mock.calls[0][0] as Date;
+    expect(arg.getMonth()).toBe(3); // April
+  });
+
+  it('range preview highlight spans across months during hover', async () => {
+    render(
+      <CalendarWidget
+        mode="range"
+        value={new Date(2026, 2, 15)}
+        numberOfMonths={2}
+        onChange={vi.fn()}
+        locale="en-US"
+      />,
+    );
+
+    // First click in March
+    const march25 = screen.getByLabelText(/March 25, 2026/);
+    await userEvent.click(march25);
+
+    // Hover over a date in April — pick the non-outside-day cell
+    const april5 = screen
+      .getAllByLabelText(/April 5, 2026/)
+      .find((el) => !el.className.includes('outside'))!;
+    fireEvent.mouseEnter(april5);
+
+    // A date between (March 28) should show preview styling
+    const march28 = screen.getByLabelText(/March 28, 2026/);
+    expect(march28.className).toContain('inPreview');
+  });
+});

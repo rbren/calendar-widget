@@ -61,6 +61,9 @@ export interface CalendarWidgetProps {
   /** Called when keyboard focus moves to a new day cell.
    *  Useful for showing previews or loading details for the focused date. */
   onDayFocus?: (date: Date) => void;
+  /** Number of consecutive months to display side-by-side (default: 1, max recommended: 3).
+   *  Values ≤ 0 are treated as 1. */
+  numberOfMonths?: number;
   /** Additional CSS class for the root element */
   className?: string;
 }
